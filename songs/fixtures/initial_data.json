@@ -1,0 +1,27 @@
+[
+  {
+    "model": "songs.artist",
+    "pk": 1,
+    "fields": {
+      "name": "El artista"
+    }
+  },
+  {
+    "model": "songs.album",
+    "pk": 1,
+    "fields": {
+      "name": "Recopilatorio",
+      "artist": 1
+    }
+  },
+  {
+    "model": "songs.song",
+    "pk": 1,
+    "fields": {
+      "title": "LA cancion (con mayusculas)",
+      "duration": 300,
+      "stream_url": "nothing_yet",
+      "album": 1
+    }
+  }
+]
