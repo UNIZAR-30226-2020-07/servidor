@@ -10,7 +10,4 @@
 
 # Recreate database
 
-* delete files under all migrations folders and the db.sqlite3
-* `python manage.py makemigrations`
-* `python manage.py migrate`
-* `python manage.py loaddata initial_data`
+* `python manage.py recreate_database`
