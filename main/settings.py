@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,11 +40,14 @@ INSTALLED_APPS = [
     'songs',
     'api',
     'administration',
+    'users',
 
     'rest_framework',
 
     'drf_yasg',
 ]
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
