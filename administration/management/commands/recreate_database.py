@@ -17,7 +17,8 @@ def run():
     What will run
     """
     deleteDatabase()
-    populateDatabase()
+    populateUsers()
+    populateSongs()
 
 
 def deleteDatabase():
@@ -28,34 +29,50 @@ def deleteDatabase():
     import glob
 
     # delete database file (may not exists, glob will return nothing)
+    print('Deleting db.sqlite3 file...')
     for file in glob.glob("db.sqlite3"):
         os.remove(file)
-        print('Deleted database file')
+        print('Deleted', file)
+    print('...done')
 
     # delete migrations files available
+    print('Deleting migrations files...')
     for folder in glob.glob("*/migrations/"):
         for file in os.listdir(folder):
-            if not file == '__init__.py' and file.endswith('.py'):
+            if not file == '__init__.py' and (file.endswith('.py') or file.endswith('.pyc')):
                 os.remove(folder + file)
-                print('Deleted migration file:', folder + file)
+                print('Deleted', folder + file)
+    print('...done')
 
     # make migrations
+    print('Call makemigrations...')
     call_command('makemigrations')
+    print('...done')
 
     # migrate
+    print('Call migrate...')
     call_command('migrate')
+    print('...done')
 
 
-def populateDatabase():
+def populateUsers():
     """
-    Populates the database with fake data
+    Populates the database with a default superuser
     """
     from django.contrib.auth import get_user_model
 
     # create superuser
+    print('Create superuser...')
     User = get_user_model()
-    User.objects.create_superuser('user', 'user@user.user', 'user')
+    User.objects.create_superuser(username='user', email='user@user.user', password='user')
+    print('...done')
 
+
+def populateSongs():
+    """
+    Populates the database with fake data
+    """
+    print('Creating songs...')
     # populate data
     for artist_param in ['Bob', 'Charly', 'DJ', 'Stanley', 'Luna']:
         # create the artist
@@ -82,3 +99,4 @@ def populateDatabase():
                 )
                 song.save()
                 print('Created song:', song)
+    print('done')
