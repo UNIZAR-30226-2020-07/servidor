@@ -2,11 +2,7 @@
 
 # Instalation
 
-* `pip install django`
-* `pip install djangorestframework `
-* `pip install django-rest-auth`
-* `pip install django-allauth`
-* `pip install drf-yasg`
+* `pip install -r requirements.txt`
 
 # Recreate database
 
