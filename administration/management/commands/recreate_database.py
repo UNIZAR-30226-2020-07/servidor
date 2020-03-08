@@ -1,7 +1,7 @@
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
-from songs.models import Song, Artist, Album
+from songs.models import Song, Artist, Album, Genre
 
 
 class Command(BaseCommand):
@@ -73,6 +73,7 @@ def populateSongs():
     Populates the database with fake data
     """
     print('Creating songs...')
+    i = 0
     # populate data
     for artist_param in ['Bob', 'Charly', 'DJ', 'Stanley', 'Luna']:
         # create the artist
@@ -96,7 +97,9 @@ def populateSongs():
                     duration=10 * (song_param + 1),
                     stream_url="debug:{}/{}/{}".format(artist_param, album_param, song_param),
                     album=album,
+                    genre=Genre.values[i],
                 )
                 song.save()
+                i = (i + 1) % len(Genre.values)
                 print('Created song:', song)
     print('done')

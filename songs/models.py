@@ -1,6 +1,29 @@
 from django.db import models
 
 
+class Genre(models.TextChoices):
+    NINETYS = "90s"
+    CLASSIC = "Classic"
+    ELECTRONIC = "Electronic"
+    REGGAE = "Reggase"
+    R_B = "R&B"
+    LATIN = "Latin"
+    OLDIES = "Oldies"
+    COUNTRY = "Country"
+    RAP = "Rap"
+    ROCK = "Rock"
+    METAL = "Metal"
+    POP = "Pop"
+    BLUES = "Blues"
+    JAZZ = "Jazz"
+    FOLK = "Folk"
+    EIGHTYS = "80s"
+
+    PLAYLIST = "Playlist"
+
+
+##############################
+
 # Object Artist with name and list of albums
 class Artist(models.Model):
     name = models.CharField(max_length=100)
@@ -18,3 +41,8 @@ class Song(models.Model):
     duration = models.IntegerField()
     stream_url = models.CharField(max_length=100)
     album = models.ForeignKey(Album, null=True, on_delete=models.SET_NULL, related_name='songs')
+
+    genre = models.CharField(
+        max_length=14,
+        choices=Genre.choices,
+    )
