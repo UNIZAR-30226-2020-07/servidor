@@ -64,7 +64,13 @@ def populateUsers():
     # create superuser
     print('Create superuser...')
     User = get_user_model()
-    User.objects.create_superuser(username='user', email='user@user.user', password='user')
+    User.objects.create_superuser(username='admin', email='admin@admin.admin', password='admin')
+    print('...done')
+
+    # create normal user
+    print('Create normal user...')
+    User = get_user_model()
+    User.objects.create_user(username='user', email='user@user.user', password='user')
     print('...done')
 
 
