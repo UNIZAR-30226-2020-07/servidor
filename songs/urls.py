@@ -1,3 +1,6 @@
+"""
+Registers in Django the url->view relations
+"""
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
@@ -9,7 +12,7 @@ router.register(r'artist', views.ArtistViewSet)
 router.register(r'album', views.AlbumViewSet)
 router.register(r'songs', views.SongViewSet)
 
-# The API URLs are now determined automatically by the router.
+# The API URLs are determined automatically by the router.
 urlpatterns = [
     path('', include(router.urls)),
 ]

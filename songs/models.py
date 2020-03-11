@@ -1,3 +1,6 @@
+"""
+List of models
+"""
 from django.db import models
 
 
@@ -24,25 +27,43 @@ class Genre(models.TextChoices):
 
 ##############################
 
-# Object Artist with name and list of albums
 class Artist(models.Model):
+    """
+    Object Artist with name and list of albums
+    """
     name = models.CharField(max_length=100)
 
+    # albums = reverse relation
 
-# Object album with name, artist and list of songs
+    def __str__(self):
+        return self.name
+
+
 class Album(models.Model):
+    """
+    Object album with name, artist and list of songs
+    """
     name = models.CharField(max_length=100)
     artist = models.ForeignKey(Artist, null=True, on_delete=models.SET_NULL, related_name='albums')
 
+    # songs = reverse relation
 
-# Object Song with title, duration (seconds), stream_url for future use and album
+    def __str__(self):
+        return self.name
+
+
 class Song(models.Model):
+    """
+    Object Song with title, duration (seconds), stream_url for future use and album
+    """
     title = models.CharField(max_length=100)
     duration = models.IntegerField()
     stream_url = models.CharField(max_length=100)
     album = models.ForeignKey(Album, null=True, on_delete=models.SET_NULL, related_name='songs')
-
     genre = models.CharField(
-        max_length=14,
+        max_length=max(len(e) for e in Genre.__members__.values()),  # automatic max length
         choices=Genre.choices,
     )
+
+    def __str__(self):
+        return self.title

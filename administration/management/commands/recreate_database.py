@@ -1,85 +1,99 @@
+"""
+Command to automatize the recreation of the sqlite database
+1) Deletes the sqlite file
+2) Deletes all the migrations
+3) Runs makemigrations
+4) Runs migrate
+5) Creates some default objects in the database (users, songs, etc)
+
+Just call it from the command line: $python manage.py recreate_database
+"""
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
 from songs.models import Song, Artist, Album, Genre
 
 
+# Registers the command in Django
 class Command(BaseCommand):
     def handle(self, **options):
         run()
 
 
 ###################################################################################################
+import os
+import glob
+from django.contrib.auth import get_user_model
 
 
 def run():
     """
     What will run
     """
-    deleteDatabase()
+    print('Deleting db.sqlite3 file...')
+    deleteDatabaseFile()
+    print('...done')
+
+    print('Deleting migrations files...')
+    deleteMigrations()
+    print('...done')
+
+    print('Call makemigrations...')
+    call_command('makemigrations')
+    print('...done')
+
+    print('Call migrate...')
+    call_command('migrate')
+    print('...done')
+
+    print('Populating database...')
     populateUsers()
     populateSongs()
+    print('...done')
 
 
-def deleteDatabase():
+def deleteDatabaseFile():
     """
-    Deletes the database
+    Deletes the sqlite database file
     """
-    import os
-    import glob
-
-    # delete database file (may not exists, glob will return nothing)
-    print('Deleting db.sqlite3 file...')
+    # (may not exists, in which case glob will return nothing)
     for file in glob.glob("db.sqlite3"):
         os.remove(file)
         print('Deleted', file)
-    print('...done')
 
-    # delete migrations files available
-    print('Deleting migrations files...')
+
+def deleteMigrations():
+    """
+    delete existing migrations files
+    """
     for folder in glob.glob("*/migrations/"):
         for file in os.listdir(folder):
             if not file == '__init__.py' and (file.endswith('.py') or file.endswith('.pyc')):
                 os.remove(folder + file)
                 print('Deleted', folder + file)
-    print('...done')
-
-    # make migrations
-    print('Call makemigrations...')
-    call_command('makemigrations')
-    print('...done')
-
-    # migrate
-    print('Call migrate...')
-    call_command('migrate')
-    print('...done')
 
 
 def populateUsers():
     """
-    Populates the database with a default superuser
+    Populates the database with default users
     """
-    from django.contrib.auth import get_user_model
+    User = get_user_model()
 
     # create superuser
-    print('Create superuser...')
-    User = get_user_model()
     User.objects.create_superuser(username='admin', email='admin@admin.admin', password='admin')
-    print('...done')
+    print('Created superuser')
 
     # create normal user
-    print('Create normal user...')
-    User = get_user_model()
     User.objects.create_user(username='user', email='user@user.user', password='user')
-    print('...done')
+    print('Created normal user')
 
 
 def populateSongs():
     """
-    Populates the database with fake data
+    Populates the database with some songs/albums/artists
     """
-    print('Creating songs...')
     i = 0
+
     # populate data
     for artist_param in ['Bob', 'Charly', 'DJ', 'Stanley', 'Luna']:
         # create the artist
@@ -108,4 +122,3 @@ def populateSongs():
                 song.save()
                 i = (i + 1) % len(Genre.values)
                 print('Created song:', song)
-    print('done')

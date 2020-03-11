@@ -1,3 +1,6 @@
+"""
+Registers in Django the url->view relations
+"""
 from django.conf.urls import url
 from django.urls import include
 
