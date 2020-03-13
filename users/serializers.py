@@ -8,9 +8,9 @@ from users.models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
     """
-    Only id, username and email is shown
+    Only username and email are shown
     """
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', ]
+        fields = ['username', 'email', ]
