@@ -33,7 +33,7 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SongSerializer
 
 
-class PlaylistViewSet(viewsets.ViewSet):
+class PlaylistViewSet(viewsets.ModelViewSet):
     """
     Playlist are readonly
     """

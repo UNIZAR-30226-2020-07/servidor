@@ -46,7 +46,6 @@ class PlaylistSerializer(serializers.ModelSerializer):
     """
     All fields are shown
     """
-    song = SongSerializer();
 
     class Meta:
         model = Playlist
