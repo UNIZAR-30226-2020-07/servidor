@@ -74,7 +74,7 @@ class Playlist(models.Model):
     Object Playlist with title, ID and Songs
     """
     name = models.CharField(max_length=100)
-    allSongs = models.ManyToManyField(Song, null=True, related_name='playlists')
+    allSongs = models.ManyToManyField(Song, related_name='playlists')
 
     def __str__(self):
         return self.name
