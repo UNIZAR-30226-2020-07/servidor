@@ -11,6 +11,7 @@ router = DefaultRouter()
 router.register(r'artist', views.ArtistViewSet)
 router.register(r'album', views.AlbumViewSet)
 router.register(r'songs', views.SongViewSet)
+router.register(r'Playlist', views.PlaylistViewSet)
 
 # The API URLs are determined automatically by the router.
 urlpatterns = [

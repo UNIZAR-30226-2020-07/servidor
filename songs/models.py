@@ -67,3 +67,14 @@ class Song(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Playlist(models.Model):
+    """
+    Object Playlist with title, ID and Songs
+    """
+    name = models.CharField(max_length=100)
+    allSongs = models.ForeignKey(Song, null=True, on_delete=models.SET_NULL, related_name='playlists')
+
+    def __str__(self):
+        return self.name
