@@ -137,76 +137,115 @@ class Manager:
         self.debug = not self.debug
 
 
+class ConsoleMenu:
+    def __init__(self):
+        self.options = []
+        self.running = True
+
+    def add(self, label, description, function):
+        self.options.append((label, description, function))
+
+    def separation(self):
+        self.add(None, None, None)
+
+    def run(self):
+        self.running = True
+        while self.running:
+            print()
+            print("What do you want to do?")
+            for label, desc, _ in self.options:
+                if label is None:
+                    print()
+                else:
+                    print("{}) {}".format(label, desc() if callable(desc) else desc))
+
+            c = input(">")
+
+            for label, _, func in self.options:
+                if label == c:
+                    func()
+                    break
+            else:
+                print("unknown option, try again")
+
+    def exit(self):
+        self.running = False
+
+
 if __name__ == '__main__':
     manager = Manager()
 
-    while True:
-        option = input("""
-What do you want to do?
-1) Get list of songs
-2) Register new user
-3) Login existing user
-4) Get current user data
+    menu = ConsoleMenu()
 
-7) Use local ({})
-8) Debug ({})
-9) Exit
->""".format(manager.uselocal, manager.debug))
-        if option == '1':
-            print("Example of fetching songs:")
-            songs = manager.getSongs()
-            for song in songs:
-                album = song['album']
-                artist = album['artist']
-                print("Song '{title}' of genre {genre} has a duration of {duration} seconds".format(**song))
-                print("    and it's from the album '{name}'".format(**album))
-                print("    made by {name}".format(**artist))
 
-        elif option == '2':
-            print("Example of register user")
+    def songs():
+        print("Example of fetching songs:")
+        songs = manager.getSongs()
+        for song in songs:
+            album = song['album']
+            artist = album['artist']
+            print("Song '{title}' of genre {genre} has a duration of {duration} seconds".format(**song))
+            print("    and it's from the album '{name}'".format(**album))
+            print("    made by {name}".format(**artist))
 
-            while True:
-                username = input('Enter an username:')
-                email = input('Enter an email:')
-                password1 = input('Enter a password:')
-                password2 = input('Repeat the password:')
-                result = manager.register(username, email, password1, password2)
-                if result is None:
-                    print('Done')
-                    break
-                else:
-                    for msg in result:
-                        print(msg)
 
-        elif option == '3':
-            print("Example of login user")
-            while True:
-                username_email = input('Enter the username or email:')
-                password = input('Enter the password:')
-                result = manager.login(username_email, password)
-                if result is None:
-                    print('Done')
-                    break
-                else:
-                    for msg in result:
-                        print(msg)
+    menu.add("1", "Get list of songs", songs)
 
-        elif option == '4':
-            print("Example of retrieving auth data")
-            user = manager.getCurrentUser()
-            if user is None:
-                print('You must authenticate first')
+
+    def register():
+        print("Example of register user")
+
+        while True:
+            username = input('Enter an username:')
+            email = input('Enter an email:')
+            password1 = input('Enter a password:')
+            password2 = input('Repeat the password:')
+            result = manager.register(username, email, password1, password2)
+            if result is None:
+                print('Done')
+                break
             else:
-                print("Your username is '{username}' and your email '{email}'".format(**user))
+                for msg in result:
+                    print(msg)
 
-        elif option == '7':
-            manager.toggleLocal()
 
-        elif option == '8':
-            manager.toggleDebug()
+    menu.add("2", "Register new user", register)
 
-        elif option == '9':
-            break
 
+    def login():
+        print("Example of login user")
+        while True:
+            username_email = input('Enter the username or email:')
+            password = input('Enter the password:')
+            result = manager.login(username_email, password)
+            if result is None:
+                print('Done')
+                break
+            else:
+                for msg in result:
+                    print(msg)
+
+
+    menu.add("3", "Login existing user", login)
+
+
+    def user():
+        print("Example of retrieving auth data")
+        user = manager.getCurrentUser()
+        if user is None:
+            print('You must authenticate first')
         else:
-            print("unknown option, try again")
+            print("Your username is '{username}' and your email '{email}'".format(**user))
+
+
+    menu.add("4", "Get current user data", user)
+
+    menu.separation()
+
+    menu.add("7", lambda: "Use local ({})".format(manager.uselocal), manager.toggleLocal)
+
+    menu.add("8", lambda: "Debug ({})".format(manager.debug), manager.toggleDebug)
+
+    menu.add("9", "Exit", menu.exit)
+
+    menu.run()
