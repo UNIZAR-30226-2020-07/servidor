@@ -5,15 +5,17 @@ from urllib.request import Request, urlopen
 
 
 class Manager:
-    BASE_URL = 'https://ps-20-server-django-app.herokuapp.com/api/v1'
+    BASE_URL = 'https://ps-20-server-django-app.herokuapp.com/api/v1/'
 
-    # BASE_URL = 'http://127.0.0.1:8000/api/v1'
+    BASE_URL_LOCAL = 'http://127.0.0.1:8000/api/v1/'
 
     def __init__(self):
         """
         Python things, indicates this object has a key variable
         """
         self.key = None
+        self.uselocal = False
+        self.debug = False
 
     def _fetch(self, url, body=None, token=None):
         """
@@ -23,6 +25,10 @@ class Manager:
         :param token: authentication token
         :return: json result
         """
+
+        # url
+        if not url.startswith("http"):
+            url = (self.BASE_URL_LOCAL if self.uselocal else self.BASE_URL) + url
 
         # format json body
         if body is None:
@@ -48,7 +54,8 @@ class Manager:
 
         # parse and return
         jsonObject = json.loads(result)
-        # print(url, "=>", jsonObject)  # debug
+        if self.debug:
+            print(url, "=>", jsonObject)  # debug
         return jsonObject
 
     def formatErrors(self, result):
@@ -65,7 +72,7 @@ class Manager:
         """
         GET songs
         """
-        url = self.BASE_URL + '/songs/'
+        url = 'songs/'
         while url is not None:
             data = self._fetch(url)
             for song in data['results']:
@@ -76,7 +83,7 @@ class Manager:
         """
         Register a new user
         """
-        result = self._fetch(self.BASE_URL + '/rest-auth/registration/', {
+        result = self._fetch('rest-auth/registration/', {
             'username': username,
             'email': email,
             'password1': password1,
@@ -100,7 +107,7 @@ class Manager:
         else:
             username = username_email
             email = ''
-        result = self._fetch(self.BASE_URL + '/rest-auth/login/', {
+        result = self._fetch('rest-auth/login/', {
             'email': email,
             'username': username,
             'password': password,
@@ -121,7 +128,13 @@ class Manager:
         if self.key is None:
             # only if registered
             return None
-        return self._fetch(self.BASE_URL + '/rest-auth/user/', token=self.key)
+        return self._fetch('rest-auth/user/', token=self.key)
+
+    def toggleLocal(self):
+        self.uselocal = not self.uselocal
+
+    def toggleDebug(self):
+        self.debug = not self.debug
 
 
 if __name__ == '__main__':
@@ -135,8 +148,10 @@ What do you want to do?
 3) Login existing user
 4) Get current user data
 
+7) Use local ({})
+8) Debug ({})
 9) Exit
->""")
+>""".format(manager.uselocal, manager.debug))
         if option == '1':
             print("Example of fetching songs:")
             songs = manager.getSongs()
@@ -183,6 +198,12 @@ What do you want to do?
                 print('You must authenticate first')
             else:
                 print("Your username is '{username}' and your email '{email}'".format(**user))
+
+        elif option == '7':
+            manager.toggleLocal()
+
+        elif option == '8':
+            manager.toggleDebug()
 
         elif option == '9':
             break
