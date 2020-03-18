@@ -120,9 +120,6 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 # Following is added to enable registration with email instead of username
 AUTHENTICATION_BACKENDS = (
-    # our backend
-    "user.backends.MyBackend"
-
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
 
