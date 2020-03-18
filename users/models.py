@@ -10,8 +10,7 @@ class CustomUser(AbstractUser):
     """
     Extends the default user
     """
-    friends = models.ManyToManyField('CustomUser')
-    pass
+    friends = models.ManyToManyField("self")
 
 
 # https://docs.djangoproject.com/en/3.0/topics/auth/customizing/
