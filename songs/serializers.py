@@ -4,6 +4,7 @@ A serializer represents how an object is converted into JSON
 from rest_framework import serializers
 
 from songs.models import Song, Artist, Album, Playlist
+from users.serializers import UserSerializer
 
 
 class ArtistSerializer(serializers.ModelSerializer):
@@ -46,6 +47,8 @@ class PlaylistSerializer(serializers.ModelSerializer):
     """
     All fields are shown
     """
+
+    user = UserSerializer(read_only=True)  # show user details, and also don't enter when creating
 
     class Meta:
         model = Playlist
