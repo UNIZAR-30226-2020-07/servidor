@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
     Extends the default user
     """
     # playlists : reverse relation in Playlist
-    friends = models.ManyToManyField("self")
+    friends = models.ManyToManyField("self", blank=True)
 
 
 class Playlist(models.Model):

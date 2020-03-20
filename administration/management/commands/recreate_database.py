@@ -137,3 +137,4 @@ def populateUsers():
             )
             playlist.save()
             playlist.songs.set(sample(list(songs), 5))
+            print("Created playlist {}".format(playlist))
