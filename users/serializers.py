@@ -3,7 +3,7 @@ A serializer represents how an object is converted into JSON
 """
 from rest_framework import serializers
 
-from users.models import CustomUser
+from users.models import CustomUser, Playlist
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,3 +25,15 @@ class UserSerializer(serializers.ModelSerializer):
             "groups",
             "user_permissions",
         )
+
+
+class PlaylistSerializer(serializers.ModelSerializer):
+    """
+    All fields are shown
+    """
+
+    user = UserSerializer(read_only=True)  # show user details, and also don't enter when creating
+
+    class Meta:
+        model = Playlist
+        fields = '__all__'

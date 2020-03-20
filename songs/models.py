@@ -3,8 +3,6 @@ List of models
 """
 from django.db import models
 
-from main import settings
-
 
 class Genre(models.TextChoices):
     NINETYS = "90s"
@@ -69,15 +67,3 @@ class Song(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class Playlist(models.Model):
-    """
-    Object Playlist with title, ID and Songs
-    """
-    name = models.CharField(max_length=100)
-    songs = models.ManyToManyField(Song, related_name='playlists')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL)
-
-    def __str__(self):
-        return self.name
