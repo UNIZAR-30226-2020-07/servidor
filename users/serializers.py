@@ -13,8 +13,4 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        permissions = [
-            #("edit_own_playlist_" + models.user.get_username(), "Can edit his own created playlits"),
-            ("edit_own_playlist", "Can edit his own created playlits"),
-        ]
         fields = ['username', 'email', ]

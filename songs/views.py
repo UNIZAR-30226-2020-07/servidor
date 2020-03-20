@@ -3,9 +3,10 @@ Define how pages are shown to the user.
 Create your views here.
 """
 from rest_framework import viewsets
-from rest_framework.permissions import BasePermission, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
 from songs.models import Song, Artist, Album, Playlist
+from songs.permissions import IsOwnerOrAdmin
 from songs.serializers import SongSerializer, ArtistSerializer, AlbumSerializer, PlaylistSerializer
 
 
@@ -53,15 +54,3 @@ class PlaylistViewSet(viewsets.ModelViewSet):
             # only owner (or admin) users can modify
             return [IsOwnerOrAdmin()]
         return super(self.__class__, self).get_permissions()
-
-
-class IsOwnerOrAdmin(BasePermission):
-    """
-    Custom permission to only allow owners or admins of an object to edit it.
-    """
-
-    def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated
-
-    def has_object_permission(self, request, view, obj):
-        return obj.user == request.user or (request.user and request.user.is_staff)
