@@ -6,14 +6,6 @@ from rest_framework import serializers
 from songs.models import Song, Artist, Album
 
 
-def all_fields(model):
-    """
-    Utility to add all fields
-    When using '__all__' related fields are not included
-    """
-    return list(f.name for f in model._meta.get_fields())
-
-
 class ArtistSerializer(serializers.ModelSerializer):
     """
     All fields are shown
@@ -21,7 +13,11 @@ class ArtistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Artist
-        fields = all_fields(model)
+        fields = [
+            "id",
+            "name",
+            "albums",
+        ]
 
 
 class AlbumSerializer(serializers.ModelSerializer):
@@ -32,7 +28,13 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Album
-        fields = all_fields(model)
+        fields = [
+            "id",
+            "name",
+            "songs",
+            "artist",
+            # "type",
+        ]
 
 
 class SongSerializer(serializers.ModelSerializer):
@@ -44,4 +46,11 @@ class SongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Song
-        fields = '__all__'
+        fields = [
+            "id",
+            "title",
+            "duration",
+            "stream_url",
+            "album",
+            "genre",
+        ]
