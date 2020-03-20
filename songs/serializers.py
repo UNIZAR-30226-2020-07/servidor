@@ -6,28 +6,33 @@ from rest_framework import serializers
 from songs.models import Song, Artist, Album
 
 
+def all_fields(model):
+    """
+    Utility to add all fields
+    When using '__all__' related fields are not included
+    """
+    return list(f.name for f in model._meta.get_fields())
+
+
 class ArtistSerializer(serializers.ModelSerializer):
     """
     All fields are shown
     """
 
-    # albums = AlbumSerializer(many=True)  # make albums be a list of albums as json, not just their id
-
     class Meta:
         model = Artist
-        fields = '__all__'
+        fields = all_fields(model)
 
 
 class AlbumSerializer(serializers.ModelSerializer):
     """
     All fields are shown
     """
-    # songs = SongSerializer(many=True)  # make songs be a list of songs as json, not just their id
     artist = ArtistSerializer()
 
     class Meta:
         model = Album
-        fields = '__all__'
+        fields = all_fields(model)
 
 
 class SongSerializer(serializers.ModelSerializer):
@@ -40,5 +45,3 @@ class SongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields = '__all__'
-
-

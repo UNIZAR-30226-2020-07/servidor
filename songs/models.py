@@ -33,7 +33,7 @@ class Artist(models.Model):
     """
     name = models.CharField(max_length=100)
 
-    # albums = reverse relation
+    # albums = reverse relation in Album
 
     def __str__(self):
         return self.name
@@ -46,7 +46,7 @@ class Album(models.Model):
     name = models.CharField(max_length=100)
     artist = models.ForeignKey(Artist, null=True, on_delete=models.SET_NULL, related_name='albums')
 
-    # songs = reverse relation
+    # songs = reverse relation in Song
 
     def __str__(self):
         return self.name
@@ -64,6 +64,8 @@ class Song(models.Model):
         max_length=max(len(e) for e in Genre.__members__.values()),  # automatic max length
         choices=Genre.choices,
     )
+
+    # playlists: reverse relation in Playlist
 
     def __str__(self):
         return self.title

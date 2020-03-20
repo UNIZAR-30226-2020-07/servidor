@@ -12,7 +12,7 @@ class CustomUser(AbstractUser):
     """
     Extends the default user
     """
-    # playlist : reverse relation
+    # playlists : reverse relation in Playlist
     friends = models.ManyToManyField("self")
 
 
@@ -22,7 +22,7 @@ class Playlist(models.Model):
     """
     name = models.CharField(max_length=100)
     songs = models.ManyToManyField(Song, related_name='playlists')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='playlists')
 
     def __str__(self):
         return self.name
