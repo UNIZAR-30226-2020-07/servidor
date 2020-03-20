@@ -13,4 +13,15 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', ]
+        exclude = (  # exclude internal data
+            "password",
+            "last_login",
+            "is_superuser",
+            "first_name",
+            "last_name",
+            "is_staff",
+            "is_active",
+            "date_joined",
+            "groups",
+            "user_permissions",
+        )

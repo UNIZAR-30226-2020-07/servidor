@@ -9,4 +9,5 @@ class CustomUser(AbstractUser):
     """
     Extends the default user
     """
+    # playlist : defined in PlayList Model
     friends = models.ManyToManyField("self")
