@@ -17,7 +17,7 @@ class Manager:
         self.uselocal = False
         self.debug = False
 
-    def _fetch(self, url, body=None, token=None):
+    def _fetch(self, url, body=None, token=None, method=None):
         """
         Makes the online petition (GET or POST)
         :param url: url to fetch
@@ -41,9 +41,8 @@ class Manager:
             headers = {}
         else:
             headers = {'Authorization': 'Token {}'.format(token)}
-
         # make request
-        request = Request(url=url, data=data, headers=headers)
+        request = Request(url=url, data=data, headers=headers, method=method)
 
         try:
             # get response
@@ -78,6 +77,44 @@ class Manager:
             for song in data['results']:
                 yield song
             url = data['next']
+
+    def getPlaylists(self,n_playlist):
+        """
+        GET playlists
+        """
+        url = 'playlist/' + n_playlist
+        data = self._fetch(url)
+        for playlist in data['results']:
+            yield playlist
+
+    def createPlaylist(self, p_name, songs):
+        """
+        CREATE playlist
+        """
+        url = 'playlist/'
+        data = self._fetch(url, {'name': p_name,
+                                 'songs': songs})
+        if 'error' in data:
+            # error
+            return self.formatErrors(data)
+
+    def editPlaylist(self, n_playlist, new_name=None, new_songs=None):
+        """
+        EDIT playlist
+        """
+        url = 'playlist/' + n_playlist
+        nname = ""
+        nsongs = ""
+        if new_name is not None:
+            nname = new_name
+        if new_songs is not None:
+            nsongs = new_songs
+
+        data = self._fetch(url, {'name': nname,
+                                 'songs': nsongs}, None, 'PUT')
+        if 'error' in data:
+            # error
+            return self.formatErrors(data)
 
     def register(self, username, email, password1, password2):
         """
