@@ -8,13 +8,16 @@ Command to automatize the recreation of the sqlite database
 
 Just call it from the command line: $python manage.py recreate_database
 """
+from random import sample
+
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
 from songs.models import Song, Artist, Album, Genre
-
-
 # Registers the command in Django
+from users.models import Playlist
+
+
 class Command(BaseCommand):
     def handle(self, **options):
         run()
@@ -47,8 +50,8 @@ def run():
     print('...done')
 
     print('Populating database...')
-    populateUsers()
     populateSongs()
+    populateUsers()
     print('...done')
 
 
@@ -71,21 +74,6 @@ def deleteMigrations():
             if not file == '__init__.py' and (file.endswith('.py') or file.endswith('.pyc')):
                 os.remove(folder + file)
                 print('Deleted', folder + file)
-
-
-def populateUsers():
-    """
-    Populates the database with default users
-    """
-    User = get_user_model()
-
-    # create superuser
-    User.objects.create_superuser(username='admin', email='admin@admin.admin', password='admin')
-    print('Created superuser')
-
-    # create normal user
-    User.objects.create_user(username='user', email='user@user.user', password='user')
-    print('Created normal user')
 
 
 def populateSongs():
@@ -122,3 +110,31 @@ def populateSongs():
                 song.save()
                 i = (i + 1) % len(Genre.values)
                 print('Created song:', song)
+
+
+def populateUsers():
+    """
+    Populates the database with default users
+    """
+    User = get_user_model()
+
+    # create superuser
+    User.objects.create_superuser(username='admin', email='admin@admin.admin', password='admin')
+    print('Created superuser')
+
+    # create normal users
+    for user_params in ['user', 'user2', 'user3']:
+        User.objects.create_user(username=user_params, email='{0}@{0}.{0}'.format(user_params), password=user_params)
+        print('Created normal user {}'.format(user_params))
+
+    # create playlists for those users
+    songs = Song.objects.all()
+    for user in User.objects.all():
+        for playlist_param in range(5):
+            playlist = Playlist(
+                name="{}'s playlist #{}".format(user, playlist_param),
+                user=user
+            )
+            playlist.save()
+            playlist.songs.set(sample(list(songs), 5))
+            print("Created playlist {}".format(playlist))

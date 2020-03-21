@@ -1,10 +1,12 @@
 """
 Registers in Django the url->view relations
 """
-from django.conf.urls import url
-from django.urls import include
+from rest_framework.routers import DefaultRouter
 
-urlpatterns = [
-    url(r'^rest-auth/', include('rest_auth.urls')),
-    url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
-]
+from users.views import UserViewSet, PlaylistViewSet
+
+# Create a router and register our viewsets with it.
+
+router = DefaultRouter()
+router.register(r'playlist', PlaylistViewSet)
+router.register(r'user', UserViewSet)

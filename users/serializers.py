@@ -1,20 +1,58 @@
 """
 A serializer represents how an object is converted into JSON
 """
+
 from rest_framework import serializers
 
-from users.models import CustomUser
+from users.models import CustomUser, Playlist
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer_API(serializers.ModelSerializer):
     """
-    Only username and email are shown
+    You can edit only the playlists and friends
     """
 
     class Meta:
         model = CustomUser
-        #permissions = [
-            #("edit_own_playlist_" + models.user.get_username(), "Can edit his own created playlits"),
-         #   ("edit_own_playlist", "Can edit his own created playlits"),
-        #]
-        fields = ['username', 'email', ]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "playlists",
+            "friends",
+        ]
+        read_only_fields = ["username", "email"]
+
+
+class UserSerializer_AUTH(serializers.ModelSerializer):
+    """
+    You can edit only username and email
+    """
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            "id",
+            "username",
+            "email",
+            "playlists",
+            "friends",
+        ]
+        read_only_fields = ["playlists", "friends"]
+
+
+class PlaylistSerializer(serializers.ModelSerializer):
+    """
+    All fields are shown
+    """
+
+    user = UserSerializer_API(read_only=True)  # show user details, and also don't enter when creating
+
+    class Meta:
+        model = Playlist
+        fields = [
+            "id",
+            "name",
+            "songs",
+            "user",
+        ]

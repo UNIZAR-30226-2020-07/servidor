@@ -6,6 +6,7 @@ from django.apps import AppConfig
 
 class SongsConfig(AppConfig):
     """
-    App to manage the songs/album/artist database readonly section
+    App for the readonly part of the database
+    TODO: rename to readonly
     """
     name = 'songs'
