@@ -84,8 +84,7 @@ class Manager:
         """
         url = 'playlist/' + n_playlist
         data = self._fetch(url)
-        for playlist in data['results']:
-            yield playlist
+        return data
 
     def createPlaylist(self, p_name, songs):
         """
@@ -93,7 +92,7 @@ class Manager:
         """
         url = 'playlist/'
         data = self._fetch(url, {'name': p_name,
-                                 'songs': songs})
+                                 'songs': songs}, self.key, 'POST')
         if 'error' in data:
             # error
             return self.formatErrors(data)
@@ -111,7 +110,7 @@ class Manager:
             nsongs = new_songs
 
         data = self._fetch(url, {'name': nname,
-                                 'songs': nsongs}, None, 'PUT')
+                                 'songs': nsongs}, self.key, 'PUT')
         if 'error' in data:
             # error
             return self.formatErrors(data)
@@ -277,12 +276,55 @@ if __name__ == '__main__':
 
     menu.add("4", "Get current user data", user)
 
+    def createPlaylist():
+        print('Example for create playlist')
+        user = manager.getCurrentUser()
+        if user is None:
+            print('You must authenticate first')
+        else:
+            playlist_name = input('Enter the name of the playlist:')
+            playlist_songs = input('Enter the songs of the playlist:')
+            manager.createPlaylist(playlist_name, playlist_songs)
+
+    menu.add("5", "Create new Playlist", createPlaylist)
+
+    def viewPlaylist():
+        print('List of actual playlists:')
+        user = manager.getCurrentUser()
+        if user is None:
+            print('You must authenticate first')
+        else:
+            playlists = manager.getPlaylists()
+
+            for playlist in playlists:
+                print("Playlist '{name}'".format(**playlist))
+                print("     with songs: '{songs}' .".format(**playlist))
+
+    menu.add("6", "View user Playlist NO FUNCIONA", viewPlaylist)
+
+    def addSongToPlaylist():
+        print('List of actual playlists:')
+        user = manager.getCurrentUser()
+        if user is None:
+            print('You must authenticate first')
+        else:
+            playlist_name = input('Enter the id of the playlist:')
+            songtoadd = input('Enter the id of the song to add:')
+            playlist = manager.getPlaylists(playlist_name)
+            print(playlist['songs'])
+            playlist['songs'] = playlist['songs'] + [int(songtoadd)]
+            print(playlist['songs'])
+            manager.editPlaylist(playlist_name, None, playlist['songs'])
+
+
+    menu.add("7", "Add song to playlist", addSongToPlaylist)
+
     menu.separation()
 
-    menu.add("7", lambda: "Use local ({})".format(manager.uselocal), manager.toggleLocal)
+    menu.add("9", lambda: "Use local ({})".format(manager.uselocal), manager.toggleLocal)
 
-    menu.add("8", lambda: "Debug ({})".format(manager.debug), manager.toggleDebug)
+    menu.add("10", lambda: "Debug ({})".format(manager.debug), manager.toggleDebug)
 
-    menu.add("9", "Exit", menu.exit)
+    menu.add("11", "Exit", menu.exit)
 
     menu.run()
