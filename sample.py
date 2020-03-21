@@ -134,6 +134,7 @@ What do you want to do?
 2) Register new user
 3) Login existing user
 4) Get current user data
+5) Get list of playlists
 
 9) Exit
 >""")
@@ -183,6 +184,14 @@ What do you want to do?
                 print('You must authenticate first')
             else:
                 print("Your username is '{username}' and your email '{email}'".format(**user))
+
+        elif option == '5':
+            print("Example of fetching playlists:")
+            playlists = manager.getPlaylists()
+            for playlist in playlists:
+                print("Playlist with title {name} have :".format(**playlist))
+                print("    and it's from the album '{name}'".format(**album))
+                print("    made by {name}".format(**artist))
 
         elif option == '9':
             break
