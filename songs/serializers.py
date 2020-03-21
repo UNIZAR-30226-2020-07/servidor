@@ -3,7 +3,7 @@ A serializer represents how an object is converted into JSON
 """
 from rest_framework import serializers
 
-from songs.models import Song, Artist, Album, Playlist
+from songs.models import Song, Artist, Album
 
 
 class ArtistSerializer(serializers.ModelSerializer):
@@ -11,23 +11,30 @@ class ArtistSerializer(serializers.ModelSerializer):
     All fields are shown
     """
 
-    # albums = AlbumSerializer(many=True)  # make albums be a list of albums as json, not just their id
-
     class Meta:
         model = Artist
-        fields = '__all__'
+        fields = [
+            "id",
+            "name",
+            "albums",
+        ]
 
 
 class AlbumSerializer(serializers.ModelSerializer):
     """
     All fields are shown
     """
-    # songs = SongSerializer(many=True)  # make songs be a list of songs as json, not just their id
     artist = ArtistSerializer()
 
     class Meta:
         model = Album
-        fields = '__all__'
+        fields = [
+            "id",
+            "name",
+            "songs",
+            "artist",
+            # "type",
+        ]
 
 
 class SongSerializer(serializers.ModelSerializer):
@@ -39,15 +46,11 @@ class SongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Song
-        fields = '__all__'
-
-
-class PlaylistSerializer(serializers.ModelSerializer):
-    """
-    All fields are shown
-    """
-
-    class Meta:
-        model = Playlist
-        fields = '__all__'
-
+        fields = [
+            "id",
+            "title",
+            "duration",
+            "stream_url",
+            "album",
+            "genre",
+        ]

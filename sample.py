@@ -5,15 +5,17 @@ from urllib.request import Request, urlopen
 
 
 class Manager:
-    BASE_URL = 'https://ps-20-server-django-app.herokuapp.com/api/v1'
+    BASE_URL = 'https://ps-20-server-django-app.herokuapp.com/api/v1/'
 
-    # BASE_URL = 'http://127.0.0.1:8000/api/v1'
+    BASE_URL_LOCAL = 'http://127.0.0.1:8000/api/v1/'
 
     def __init__(self):
         """
         Python things, indicates this object has a key variable
         """
         self.key = None
+        self.uselocal = False
+        self.debug = False
 
     def _fetch(self, url, body=None, token=None):
         """
@@ -23,6 +25,10 @@ class Manager:
         :param token: authentication token
         :return: json result
         """
+
+        # url
+        if not url.startswith("http"):
+            url = (self.BASE_URL_LOCAL if self.uselocal else self.BASE_URL) + url
 
         # format json body
         if body is None:
@@ -48,7 +54,8 @@ class Manager:
 
         # parse and return
         jsonObject = json.loads(result)
-        # print(url, "=>", jsonObject)  # debug
+        if self.debug:
+            print(url, "=>", jsonObject)  # debug
         return jsonObject
 
     def formatErrors(self, result):
@@ -65,7 +72,7 @@ class Manager:
         """
         GET songs
         """
-        url = self.BASE_URL + '/songs/'
+        url = 'songs/'
         while url is not None:
             data = self._fetch(url)
             for song in data['results']:
@@ -76,7 +83,7 @@ class Manager:
         """
         Register a new user
         """
-        result = self._fetch(self.BASE_URL + '/rest-auth/registration/', {
+        result = self._fetch('rest-auth/registration/', {
             'username': username,
             'email': email,
             'password1': password1,
@@ -100,7 +107,7 @@ class Manager:
         else:
             username = username_email
             email = ''
-        result = self._fetch(self.BASE_URL + '/rest-auth/login/', {
+        result = self._fetch('rest-auth/login/', {
             'email': email,
             'username': username,
             'password': password,
@@ -121,80 +128,124 @@ class Manager:
         if self.key is None:
             # only if registered
             return None
-        return self._fetch(self.BASE_URL + '/rest-auth/user/', token=self.key)
+        return self._fetch('rest-auth/user/', token=self.key)
+
+    def toggleLocal(self):
+        self.uselocal = not self.uselocal
+
+    def toggleDebug(self):
+        self.debug = not self.debug
+
+
+class ConsoleMenu:
+    def __init__(self):
+        self.options = []
+        self.running = True
+
+    def add(self, label, description, function):
+        self.options.append((label, description, function))
+
+    def separation(self):
+        self.add(None, None, None)
+
+    def run(self):
+        self.running = True
+        while self.running:
+            print()
+            print("What do you want to do?")
+            for label, desc, _ in self.options:
+                if label is None:
+                    print()
+                else:
+                    print("{}) {}".format(label, desc() if callable(desc) else desc))
+
+            c = input(">")
+
+            for label, _, func in self.options:
+                if label == c:
+                    func()
+                    break
+            else:
+                print("unknown option, try again")
+
+    def exit(self):
+        self.running = False
 
 
 if __name__ == '__main__':
     manager = Manager()
 
-    while True:
-        option = input("""
-What do you want to do?
-1) Get list of songs
-2) Register new user
-3) Login existing user
-4) Get current user data
-5) Get list of playlists
+    menu = ConsoleMenu()
 
-9) Exit
->""")
-        if option == '1':
-            print("Example of fetching songs:")
-            songs = manager.getSongs()
-            for song in songs:
-                album = song['album']
-                artist = album['artist']
-                print("Song '{title}' of genre {genre} has a duration of {duration} seconds".format(**song))
-                print("    and it's from the album '{name}'".format(**album))
-                print("    made by {name}".format(**artist))
 
-        elif option == '2':
-            print("Example of register user")
+    def songs():
+        print("Example of fetching songs:")
+        songs = manager.getSongs()
+        for song in songs:
+            album = song['album']
+            artist = album['artist']
+            print("Song '{title}' of genre {genre} has a duration of {duration} seconds".format(**song))
+            print("    and it's from the album '{name}'".format(**album))
+            print("    made by {name}".format(**artist))
 
-            while True:
-                username = input('Enter an username:')
-                email = input('Enter an email:')
-                password1 = input('Enter a password:')
-                password2 = input('Repeat the password:')
-                result = manager.register(username, email, password1, password2)
-                if result is None:
-                    print('Done')
-                    break
-                else:
-                    for msg in result:
-                        print(msg)
 
-        elif option == '3':
-            print("Example of login user")
-            while True:
-                username_email = input('Enter the username or email:')
-                password = input('Enter the password:')
-                result = manager.login(username_email, password)
-                if result is None:
-                    print('Done')
-                    break
-                else:
-                    for msg in result:
-                        print(msg)
+    menu.add("1", "Get list of songs", songs)
 
-        elif option == '4':
-            print("Example of retrieving auth data")
-            user = manager.getCurrentUser()
-            if user is None:
-                print('You must authenticate first')
+
+    def register():
+        print("Example of register user")
+
+        while True:
+            username = input('Enter an username:')
+            email = input('Enter an email:')
+            password1 = input('Enter a password:')
+            password2 = input('Repeat the password:')
+            result = manager.register(username, email, password1, password2)
+            if result is None:
+                print('Done')
+                break
             else:
-                print("Your username is '{username}' and your email '{email}'".format(**user))
+                for msg in result:
+                    print(msg)
 
-        elif option == '5':
-            print("Example of fetching playlists:")
-            playlists = manager.getPlaylists()
-            for playlist in playlists:
-                print("Playlist with title {name} have :".format(**playlist))
-                print("    and it's from the album '{name}'".format(**album))
-                print("    made by {name}".format(**artist))
 
-        elif option == '9':
-            break
+    menu.add("2", "Register new user", register)
 
+
+    def login():
+        print("Example of login user")
+        while True:
+            username_email = input('Enter the username or email:')
+            password = input('Enter the password:')
+            result = manager.login(username_email, password)
+            if result is None:
+                print('Done')
+                break
+            else:
+                for msg in result:
+                    print(msg)
+
+
+    menu.add("3", "Login existing user", login)
+
+
+    def user():
+        print("Example of retrieving auth data")
+        user = manager.getCurrentUser()
+        if user is None:
+            print('You must authenticate first')
         else:
-            print("unknown option, try again")
+            print("Your username is '{username}' and your email '{email}'".format(**user))
+
+
+    menu.add("4", "Get current user data", user)
+
+    menu.separation()
+
+    menu.add("7", lambda: "Use local ({})".format(manager.uselocal), manager.toggleLocal)
+
+    menu.add("8", lambda: "Debug ({})".format(manager.debug), manager.toggleDebug)
+
+    menu.add("9", "Exit", menu.exit)
+
+    menu.run()

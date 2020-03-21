@@ -1,6 +1,8 @@
 """
 Define some tests
 """
+import urllib
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
@@ -52,4 +54,13 @@ class UsersManagersTests(TestCase):
             pass
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
-                email='super@user.com', password='foo', username = 'super_name',is_superuser=False)
+                email='super@user.com', password='foo', username='super_name', is_superuser=False)
+
+
+def test_user_post_petition():
+    print("HELLO")
+    post_data = {'name': 'Gladys', 'password1': '12345678', 'password2': '12345678', 'email': 'g@gmail.com'}
+    result = urllib.urlopen('http://127.0.0.1:8000/rest-auth/registration/', urllib.urlencode(post_data))
+    content = result.read()
+    print(content)
+    print("HELLO")
