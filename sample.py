@@ -1,6 +1,5 @@
 import json
 from urllib.error import HTTPError
-from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 
@@ -23,7 +22,7 @@ class Manager:
         :param url: url to fetch
         :param body: If json data => POST, if None => GET
         :param token: authentication token
-        :return: json result
+        :return: (json, error) where json is the result as json, and error is a boolean indicating if there was an error
         """
 
         # url
@@ -34,28 +33,37 @@ class Manager:
         if body is None:
             data = None
         else:
-            data = urlencode(body).encode()
+            data = bytes(json.dumps(body), encoding='utf8')  # urlencode(body).encode()
 
         # prepare token header
         if token is None:
             headers = {}
         else:
             headers = {'Authorization': 'Token {}'.format(token)}
+        headers['Content-Type'] = 'application/json'
+        headers['Accept'] = 'application/json'
+
         # make request
         request = Request(url=url, data=data, headers=headers, method=method)
 
         try:
             # get response
             result = urlopen(request).read().decode()
+            error = False
         except HTTPError as e:
             # get response in case of error
+            if e.code is 500:
+                # server error
+                print("Server error")
+                raise e
             result = e.read().decode()
+            error = True
 
         # parse and return
         jsonObject = json.loads(result)
         if self.debug:
             print(url, "=>", jsonObject)  # debug
-        return jsonObject
+        return jsonObject, error
 
     def formatErrors(self, result):
         """
@@ -73,17 +81,17 @@ class Manager:
         """
         url = 'songs/'
         while url is not None:
-            data = self._fetch(url)
+            data, _ = self._fetch(url)
             for song in data['results']:
                 yield song
             url = data['next']
 
-    def getPlaylists(self,n_playlist):
+    def getPlaylists(self, n_playlist):
         """
         GET playlists
         """
-        url = 'playlist/' + n_playlist
-        data = self._fetch(url)
+        url = 'playlist/' + n_playlist + '/'
+        data, _ = self._fetch(url)
         return data
 
     def createPlaylist(self, p_name, songs):
@@ -91,20 +99,22 @@ class Manager:
         CREATE playlist
         """
         url = 'playlist/'
-        data = self._fetch(url, {'name': p_name,
-                                 'songs': songs}, self.key, 'POST')
-        if 'error' in data:
+        data, error = self._fetch(url, {'name': p_name,
+                                        'songs': songs}, self.key, 'POST')
+        if error:
             # error
             return self.formatErrors(data)
+        else:
+            return None
 
     def editPlaylist(self, n_playlist, new_name, new_songs):
         """
         EDIT playlist
         """
-        url = 'playlist/' + n_playlist
-        data = self._fetch(url, {'name': new_name,
-                                 'songs': new_songs}, self.key, 'PUT')
-        if 'error' in data:
+        url = 'playlist/' + n_playlist + '/'
+        data, error = self._fetch(url, {'name': new_name,
+                                        'songs': new_songs}, self.key, 'PUT')
+        if error:
             # error
             return self.formatErrors(data)
 
@@ -112,13 +122,13 @@ class Manager:
         """
         Register a new user
         """
-        result = self._fetch('rest-auth/registration/', {
+        result, error = self._fetch('rest-auth/registration/', {
             'username': username,
             'email': email,
             'password1': password1,
             'password2': password2,
         })
-        if 'key' in result:
+        if not error:
             # save key
             self.key = result['key']
             return None
@@ -136,12 +146,12 @@ class Manager:
         else:
             username = username_email
             email = ''
-        result = self._fetch('rest-auth/login/', {
+        result, error = self._fetch('rest-auth/login/', {
             'email': email,
             'username': username,
             'password': password,
         })
-        if 'key' in result:
+        if not error:
             # save key
             self.key = result['key']
             return None
@@ -157,7 +167,8 @@ class Manager:
         if self.key is None:
             # only if registered
             return None
-        return self._fetch('rest-auth/user/', token=self.key)
+        data, _ = self._fetch('rest-auth/user/', token=self.key)
+        return data
 
     def toggleLocal(self):
         self.uselocal = not self.uselocal
@@ -269,6 +280,7 @@ if __name__ == '__main__':
 
     menu.add("4", "Get current user data", user)
 
+
     def createPlaylist():
         print('Example for create playlist')
         user = manager.getCurrentUser()
@@ -277,9 +289,16 @@ if __name__ == '__main__':
         else:
             playlist_name = input('Enter the name of the playlist:')
             playlist_songs = input('Enter the songs of the playlist:')
-            manager.createPlaylist(playlist_name, playlist_songs)
+            result = manager.createPlaylist(playlist_name, playlist_songs)
+            if result is None:
+                print('Done')
+            else:
+                for msg in result:
+                    print(msg)
+
 
     menu.add("5", "Create new Playlist", createPlaylist)
+
 
     def viewPlaylist():
         print('List of actual playlists:')
@@ -293,7 +312,9 @@ if __name__ == '__main__':
                 print("Playlist '{name}'".format(**playlist))
                 print("     with songs: '{songs}' .".format(**playlist))
 
+
     menu.add("6", "View user Playlist NO FUNCIONA", viewPlaylist)
+
 
     def addSongToPlaylist():
         print('List of actual playlists:')
@@ -311,6 +332,7 @@ if __name__ == '__main__':
 
 
     menu.add("7", "Add song to playlist", addSongToPlaylist)
+
 
     def changeNameToPlaylist():
         print('List of actual playlists:')
