@@ -97,20 +97,13 @@ class Manager:
             # error
             return self.formatErrors(data)
 
-    def editPlaylist(self, n_playlist, new_name=None, new_songs=None):
+    def editPlaylist(self, n_playlist, new_name, new_songs):
         """
         EDIT playlist
         """
         url = 'playlist/' + n_playlist
-        nname = ""
-        nsongs = ""
-        if new_name is not None:
-            nname = new_name
-        if new_songs is not None:
-            nsongs = new_songs
-
-        data = self._fetch(url, {'name': nname,
-                                 'songs': nsongs}, self.key, 'PUT')
+        data = self._fetch(url, {'name': new_name,
+                                 'songs': new_songs}, self.key, 'PUT')
         if 'error' in data:
             # error
             return self.formatErrors(data)
@@ -312,12 +305,27 @@ if __name__ == '__main__':
             songtoadd = input('Enter the id of the song to add:')
             playlist = manager.getPlaylists(playlist_name)
             print(playlist['songs'])
-            playlist['songs'] = playlist['songs'] + [int(songtoadd)]
+            playlist['songs'] = playlist['songs'] + [(songtoadd)]
             print(playlist['songs'])
             manager.editPlaylist(playlist_name, None, playlist['songs'])
 
 
     menu.add("7", "Add song to playlist", addSongToPlaylist)
+
+    def changeNameToPlaylist():
+        print('List of actual playlists:')
+        user = manager.getCurrentUser()
+        if user is None:
+            print('You must authenticate first')
+        else:
+            playlist_id = input('Enter the id of the playlist:')
+            new_name = input('Enter the new name')
+            playlist = manager.getPlaylists(playlist_id)
+            print(playlist)
+            manager.editPlaylist(playlist_id, 'asfr', [20])
+
+
+    menu.add("8", "Change name to playlist", changeNameToPlaylist)
 
     menu.separation()
 
