@@ -86,7 +86,7 @@ class Manager:
                 yield song
             url = data['next']
 
-    def getPlaylists(self, n_playlist):
+    def getPlaylist(self, n_playlist):
         """
         GET playlist
         :param n_playlist: playlist to fetch
@@ -94,6 +94,17 @@ class Manager:
         url = 'playlist/' + n_playlist + '/'
         data, _ = self._fetch(url)
         return data
+
+    def getAllPlaylist(self):
+        """
+        GET all playlist from the server
+        """
+        url = 'playlist/'
+        while url is not None:
+            data, _ = self._fetch(url)
+            for playlist in data['results']:
+                yield playlist
+            url = data['next']
 
     def createPlaylist(self, p_name, songs):
         """
