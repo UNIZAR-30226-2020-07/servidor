@@ -20,7 +20,7 @@ class Manager:
         """
         Makes the online petition (GET or POST)
         :param url: url to fetch
-        :param body: If json data => POST, if None => GET
+        :param body: If json data => POST, if None => GET, other method's are specified on the "method" param
         :param token: authentication token
         :return: (json, error) where json is the result as json, and error is a boolean indicating if there was an error
         """
@@ -88,7 +88,8 @@ class Manager:
 
     def getPlaylists(self, n_playlist):
         """
-        GET playlists
+        GET playlist
+        :param n_playlist: playlist to fetch
         """
         url = 'playlist/' + n_playlist + '/'
         data, _ = self._fetch(url)
@@ -97,6 +98,8 @@ class Manager:
     def createPlaylist(self, p_name, songs):
         """
         CREATE playlist
+        :param p_name: name of the playlist
+        :param url: list of songs
         """
         url = 'playlist/'
         data, error = self._fetch(url, {'name': p_name,
@@ -110,6 +113,9 @@ class Manager:
     def editPlaylist(self, n_playlist, new_name, new_songs):
         """
         EDIT playlist
+        :param n_playlist: playlist to edit
+        :param new_name: new name to give to given playlist
+        :param new_songs: new list of songs to give to given playlist
         """
         url = 'playlist/' + n_playlist + '/'
         data, error = self._fetch(url, {'name': new_name,
@@ -117,6 +123,17 @@ class Manager:
         if error:
             # error
             return self.formatErrors(data)
+
+    def deletePlaylist(self, n_playlist):
+        """
+        DELETE playlist
+        :param n_playlist: playlist to delete
+        """
+        url = 'playlist/' + n_playlist + '/'
+        data, error = self._fetch(url, None, self.key, 'DELETE')
+        if error:
+          # error
+          return self.formatErrors(data)
 
     def register(self, username, email, password1, password2):
         """
@@ -138,7 +155,7 @@ class Manager:
 
     def login(self, username_email, password):
         """
-        Log in as a user
+        Log in as a user with email and passwaord
         """
         if '@' in username_email:
             username = ''
