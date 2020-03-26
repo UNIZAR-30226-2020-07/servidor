@@ -60,7 +60,7 @@ class Manager:
             error = True
 
         # parse and return
-        jsonObject = json.loads(result)
+        jsonObject = json.loads(result) if result is not None and result is not '' else None
         if self.debug:
             print(url, "=>", jsonObject)  # debug
         return jsonObject, error
@@ -115,11 +115,13 @@ class Manager:
         url = 'playlist/'
         data, error = self._fetch(url, {'name': p_name,
                                         'songs': songs}, self.key, 'POST')
+
         if error:
             # error
             return self.formatErrors(data)
         else:
-            return None
+            return data['id']
+
 
     def editPlaylist(self, n_playlist, new_name, new_songs):
         """
@@ -205,184 +207,43 @@ class Manager:
         self.debug = not self.debug
 
 
-class ConsoleMenu:
-    def __init__(self):
-        self.options = []
-        self.running = True
+manager = Manager()
 
-    def add(self, label, description, function):
-        self.options.append((label, description, function))
+if manager.createPlaylist('cuarentena',20) is None:
+    print("Error, create playlist without login")
 
-    def separation(self):
-        self.add(None, None, None)
+if manager.editPlaylist('15','cuarentena',[20]) is None:
+    print("Error, edit playlist without login")
 
-    def run(self):
-        self.running = True
-        while self.running:
-            print()
-            print("What do you want to do?")
-            for label, desc, _ in self.options:
-                if label is None:
-                    print()
-                else:
-                    print("{}) {}".format(label, desc() if callable(desc) else desc))
+if manager.deletePlaylist('15') is None:
+    print("Error, delete playlist without login")
 
-            c = input(">")
+manager.login('user', 'user')
+idPlaylist = manager.createPlaylist('cuarentena2', [20])
+if not isinstance(idPlaylist, int):
+    print("Error at create playlist, already loggin in")
+    print(idPlaylist)
 
-            for label, _, func in self.options:
-                if label == c:
-                    func()
-                    break
-            else:
-                print("unknown option, try again")
+if manager.editPlaylist(str(idPlaylist), 'cuarentena3', [30]) is not None:
+    print("Error at edit playlist, editing owners playlist")
 
-    def exit(self):
-        self.running = False
+manager.login('user2', 'user2')
+if manager.getCurrentUser() is None:
+    print("Error at change user")
 
+if manager.editPlaylist(str(idPlaylist), 'cuarentena25', [10]) is None:
+    print("Error at edit playlist, editing others playlist")
 
-if __name__ == '__main__':
-    manager = Manager()
+if manager.deletePlaylist(str(idPlaylist)) is None:
+    print("Error at deleting other's playlists")
 
-    menu = ConsoleMenu()
+manager.login('user', 'user')
+if manager.getCurrentUser() is None:
+    print("Error at change user")
+if manager.deletePlaylist(str(idPlaylist)) is not None:
+    print("Error at deleting your own playlist")
 
 
-    def songs():
-        print("Example of fetching songs:")
-        songs = manager.getSongs()
-        for song in songs:
-            album = song['album']
-            artist = album['artist']
-            print("Song '{title}' of genre {genre} has a duration of {duration} seconds".format(**song))
-            print("    and it's from the album '{name}'".format(**album))
-            print("    made by {name}".format(**artist))
 
 
-    menu.add("1", "Get list of songs", songs)
 
-
-    def register():
-        print("Example of register user")
-
-        while True:
-            username = input('Enter an username:')
-            email = input('Enter an email:')
-            password1 = input('Enter a password:')
-            password2 = input('Repeat the password:')
-            result = manager.register(username, email, password1, password2)
-            if result is None:
-                print('Done')
-                break
-            else:
-                for msg in result:
-                    print(msg)
-
-
-    menu.add("2", "Register new user", register)
-
-
-    def login():
-        print("Example of login user")
-        while True:
-            username_email = input('Enter the username or email:')
-            password = input('Enter the password:')
-            result = manager.login(username_email, password)
-            if result is None:
-                print('Done')
-                break
-            else:
-                for msg in result:
-                    print(msg)
-
-
-    menu.add("3", "Login existing user", login)
-
-
-    def user():
-        print("Example of retrieving auth data")
-        user = manager.getCurrentUser()
-        if user is None:
-            print('You must authenticate first')
-        else:
-            print("Your username is '{username}' and your email '{email}'".format(**user))
-
-
-    menu.add("4", "Get current user data", user)
-
-
-    def createPlaylist():
-        print('Example for create playlist')
-        user = manager.getCurrentUser()
-        if user is None:
-            print('You must authenticate first')
-        else:
-            playlist_name = input('Enter the name of the playlist:')
-            playlist_songs = input('Enter the songs of the playlist:')
-            result = manager.createPlaylist(playlist_name, playlist_songs)
-            if result is None:
-                print('Done')
-            else:
-                for msg in result:
-                    print(msg)
-
-
-    menu.add("5", "Create new Playlist", createPlaylist)
-
-
-    def viewPlaylist():
-        print('List of actual playlists:')
-        user = manager.getCurrentUser()
-        if user is None:
-            print('You must authenticate first')
-        else:
-            playlists = manager.getPlaylists()
-
-            for playlist in playlists:
-                print("Playlist '{name}'".format(**playlist))
-                print("     with songs: '{songs}' .".format(**playlist))
-
-
-    menu.add("6", "View user Playlist NO FUNCIONA", viewPlaylist)
-
-
-    def addSongToPlaylist():
-        print('List of actual playlists:')
-        user = manager.getCurrentUser()
-        if user is None:
-            print('You must authenticate first')
-        else:
-            playlist_name = input('Enter the id of the playlist:')
-            songtoadd = input('Enter the id of the song to add:')
-            playlist = manager.getPlaylists(playlist_name)
-            print(playlist['songs'])
-            playlist['songs'] = playlist['songs'] + [(songtoadd)]
-            print(playlist['songs'])
-            manager.editPlaylist(playlist_name, None, playlist['songs'])
-
-
-    menu.add("7", "Add song to playlist", addSongToPlaylist)
-
-
-    def changeNameToPlaylist():
-        print('List of actual playlists:')
-        user = manager.getCurrentUser()
-        if user is None:
-            print('You must authenticate first')
-        else:
-            playlist_id = input('Enter the id of the playlist:')
-            new_name = input('Enter the new name')
-            playlist = manager.getPlaylists(playlist_id)
-            print(playlist)
-            manager.editPlaylist(playlist_id, 'asfr', [20])
-
-
-    menu.add("8", "Change name to playlist", changeNameToPlaylist)
-
-    menu.separation()
-
-    menu.add("9", lambda: "Use local ({})".format(manager.uselocal), manager.toggleLocal)
-
-    menu.add("10", lambda: "Debug ({})".format(manager.debug), manager.toggleDebug)
-
-    menu.add("11", "Exit", menu.exit)
-
-    menu.run()
