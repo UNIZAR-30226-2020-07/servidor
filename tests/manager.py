@@ -122,7 +122,6 @@ class Manager:
         else:
             return data['id']
 
-
     def editPlaylist(self, n_playlist, new_name, new_songs):
         """
         EDIT playlist
@@ -145,8 +144,8 @@ class Manager:
         url = 'playlist/' + n_playlist + '/'
         data, error = self._fetch(url, None, self.key, 'DELETE')
         if error:
-          # error
-          return self.formatErrors(data)
+            # error
+            return self.formatErrors(data)
 
     def register(self, username, email, password1, password2):
         """
@@ -205,4 +204,3 @@ class Manager:
 
     def toggleDebug(self):
         self.debug = not self.debug
-

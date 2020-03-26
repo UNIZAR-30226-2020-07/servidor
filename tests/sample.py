@@ -1,5 +1,6 @@
 from tests.manager import Manager
 
+
 class ConsoleMenu:
     def __init__(self):
         self.options = []
