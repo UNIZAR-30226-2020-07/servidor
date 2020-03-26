@@ -103,7 +103,8 @@ def populateSongs():
                 song = Song(
                     title="Happy tune #" + str(song_param + 1),
                     duration=10 * (song_param + 1),
-                    stream_url="debug:{}/{}/{}".format(artist_param, album_param, song_param),
+                    stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
+                    # stream_url="debug:{}/{}/{}".format(artist_param, album_param, song_param),
                     album=album,
                     genre=Genre.values[i],
                 )
