@@ -4,12 +4,13 @@ A serializer represents how an object is converted into JSON
 
 from rest_framework import serializers
 
+from songs.serializers import SongSerializer
 from users.models import CustomUser, Playlist
 
 
 class UserSerializer_API(serializers.ModelSerializer):
     """
-    You can edit only the playlists and friends
+    Public information about a user
     """
 
     class Meta:
@@ -21,13 +22,21 @@ class UserSerializer_API(serializers.ModelSerializer):
             "playlists",
             "friends",
         ]
-        read_only_fields = ["username", "email"]
 
 
 class UserSerializer_AUTH(serializers.ModelSerializer):
     """
-    You can edit only username and email
+    Public + private information about a user
     """
+
+    def to_representation(self, instance):
+        """
+        Shows pause_song with details, but accepts only id
+        """
+        representation = super(self.__class__, self).to_representation(instance)
+        if instance.pause_song is not None:
+            representation['pause_song'] = SongSerializer(instance.pause_song).data
+        return representation
 
     class Meta:
         model = CustomUser
@@ -37,8 +46,9 @@ class UserSerializer_AUTH(serializers.ModelSerializer):
             "email",
             "playlists",
             "friends",
+            "pause_song",
+            "pause_second",
         ]
-        read_only_fields = ["playlists", "friends"]
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
