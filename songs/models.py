@@ -8,7 +8,7 @@ class Genre(models.TextChoices):
     NINETYS = "90s"
     CLASSIC = "Classic"
     ELECTRONIC = "Electronic"
-    REGGAE = "Reggase"
+    REGGAE = "Reggae"
     R_B = "R&B"
     LATIN = "Latin"
     OLDIES = "Oldies"
@@ -21,8 +21,6 @@ class Genre(models.TextChoices):
     JAZZ = "Jazz"
     FOLK = "Folk"
     EIGHTYS = "80s"
-
-    PLAYLIST = "Playlist"
 
 
 ##############################
