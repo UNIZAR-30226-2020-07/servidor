@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 # Default views for a rest api (with readonly permissions for all users)
 from users.models import CustomUser, Playlist
 from users.permissions import IsOwnerOrAdmin
-from users.serializers import UserWithPlaylistSerializer, PlaylistWithUserAndSongAndAlbumAndArtistSerializer
+from users.serializers import UserWithPlaylistAndFriendsSerializer, PlaylistWithUserAndSongAndAlbumAndArtistSerializer
 
 
 class UserViewSet(mixins.RetrieveModelMixin,
@@ -19,7 +19,7 @@ class UserViewSet(mixins.RetrieveModelMixin,
     Anyone can view all users, only the owner can edit
     """
     queryset = CustomUser.objects.all()
-    serializer_class = UserWithPlaylistSerializer
+    serializer_class = UserWithPlaylistAndFriendsSerializer
 
     def get_permissions(self):
         if self.action in ['update', 'partial_update']:

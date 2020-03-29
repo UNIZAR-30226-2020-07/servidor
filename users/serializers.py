@@ -5,6 +5,7 @@ A serializer represents how an object is converted into JSON
 from rest_framework import serializers
 
 from songs.serializers import SongWithAlbumAndArtistSerializer
+from users.fields import ShowDetailsAcceptPkField
 from users.models import CustomUser, Playlist
 
 
@@ -21,33 +22,13 @@ class PlaylistPlainSerializer(serializers.ModelSerializer):
             "songs",
             "user",
         ]
-        read_only = [
-            'user'
-        ]
 
 
-class PlaylistWithSongAndAlbumAndArtistSerializer(serializers.ModelSerializer):
+class PlaylistWithSongAndAlbumAndArtistSerializer(PlaylistPlainSerializer):
     """
     Songs/album/artist are shown with details
     """
-
-    def to_representation(self, instance):
-        """
-        Shows songs with details, but accepts only id
-        """
-        representation = super().to_representation(instance)
-        if instance.songs is not None:
-            representation['songs'] = SongWithAlbumAndArtistSerializer(instance.songs, many=True).data
-        return representation
-
-    class Meta:
-        model = Playlist
-        fields = [
-            "id",
-            "name",
-            "songs",
-            "user",
-        ]
+    songs = ShowDetailsAcceptPkField(SongWithAlbumAndArtistSerializer, many=True)
 
 
 class UserPlainSerializer(serializers.ModelSerializer):
@@ -66,38 +47,30 @@ class UserPlainSerializer(serializers.ModelSerializer):
         ]
 
 
-class UserWithPlaylistSerializer(UserPlainSerializer):
+class UserWithPlaylistAndFriendsSerializer(UserPlainSerializer):
     """
     Public information about a user
     """
 
-    def to_representation(self, instance):
-        """
-        Shows playlists with details, but accepts only id
-        """
-        representation = super().to_representation(instance)
-        if instance.playlists is not None:
-            representation['playlists'] = PlaylistPlainSerializer(instance.playlists, many=True).data
-        return representation
+    playlists = ShowDetailsAcceptPkField(PlaylistPlainSerializer, many=True)
+    friends = ShowDetailsAcceptPkField(UserPlainSerializer, many=True)
 
 
-class UserWithPlaylistSerializer_AUTH(UserWithPlaylistSerializer):
+class UserAuthSerializer(UserWithPlaylistAndFriendsSerializer):
     """
     Public + private information about a user
     """
 
-    def to_representation(self, instance):
-        """
-        Shows pause_song with details, but accepts only id
-        """
-        representation = super().to_representation(instance)
-        if instance.pause_song is not None:
-            representation['pause_song'] = SongWithAlbumAndArtistSerializer(instance.pause_song).data
-        return representation
+    pause_song = ShowDetailsAcceptPkField(SongWithAlbumAndArtistSerializer)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.Meta.fields += [
+    class Meta:
+        model = CustomUser
+        fields = [
+            "id",
+            "username",
+            "email",
+            "playlists",
+            "friends",
             "pause_song",
             "pause_second",
         ]
@@ -108,4 +81,4 @@ class PlaylistWithUserAndSongAndAlbumAndArtistSerializer(PlaylistWithSongAndAlbu
     User and songs/album/artist are shown with details
     """
 
-    user = UserPlainSerializer()
+    user = UserPlainSerializer(read_only=True)
