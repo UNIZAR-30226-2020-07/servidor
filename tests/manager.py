@@ -205,7 +205,7 @@ class Manager:
     def addFollowed(self, username_id, followed_user):
         """
         ADD a user to the "friend" list of a user
-        :param username: user toadd the friend to
+        :param username_id: principal user
         :param followed_user: username of the "friend" to add
         """
         url = 'user/' + str(username_id) + '/'
@@ -225,7 +225,7 @@ class Manager:
     def deleteFollowed(self, username_id, followed_user):
         """
         DELETE a user from the "friend" list of a user
-        :param username: user to add the friend to
+        :param username_id: principal user
         :param followed_user: username of the "friend" to delete
         """
         url = 'user/' + str(username_id) + '/'
@@ -236,9 +236,9 @@ class Manager:
 
         if followed_user in data['friends']:
             print(data['friends'])
-            new_friends = data['friends'].remove(followed_user)
-            print(new_friends)
-            data, error = self._fetch(url, {'friends': new_friends}, self.key, 'PATCH')
+            data['friends'].remove(followed_user)
+            print(data['friends'])
+            data, error = self._fetch(url, {'friends': data['friends']}, self.key, 'PATCH')
 
         if error:
             # error
