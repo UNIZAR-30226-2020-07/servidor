@@ -5,7 +5,7 @@ Create your views here.
 from rest_framework import viewsets
 
 from songs.models import Song, Artist, Album
-from songs.serializers import SongSerializer, ArtistSerializer, AlbumSerializer
+from songs.serializers import SongWithAlbumAndArtistSerializer, AlbumWithSongsAndArtistSerializer, ArtistWithAlbums
 
 
 # Default views for a rest api (with readonly permissions for all users)
@@ -14,7 +14,7 @@ class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     Artists are readonly
     """
     queryset = Artist.objects.all()
-    serializer_class = ArtistSerializer
+    serializer_class = ArtistWithAlbums
 
 
 class AlbumViewSet(viewsets.ReadOnlyModelViewSet):
@@ -22,7 +22,7 @@ class AlbumViewSet(viewsets.ReadOnlyModelViewSet):
     Albums are readonly
     """
     queryset = Album.objects.all()
-    serializer_class = AlbumSerializer
+    serializer_class = AlbumWithSongsAndArtistSerializer
 
 
 class SongViewSet(viewsets.ReadOnlyModelViewSet):
@@ -30,4 +30,4 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
     Songs are readonly
     """
     queryset = Song.objects.all()
-    serializer_class = SongSerializer
+    serializer_class = SongWithAlbumAndArtistSerializer

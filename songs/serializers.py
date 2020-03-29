@@ -6,9 +6,26 @@ from rest_framework import serializers
 from songs.models import Song, Artist, Album
 
 
-class ArtistSerializer(serializers.ModelSerializer):
+class SongPlainSerializer(serializers.ModelSerializer):
     """
-    All fields are shown
+    All fields are shown as plain text
+    """
+
+    class Meta:
+        model = Song
+        fields = [
+            "id",
+            "title",
+            "duration",
+            "stream_url",
+            "album",
+            "genre",
+        ]
+
+
+class ArtistPlainSerializer(serializers.ModelSerializer):
+    """
+    All fields are shown as plain text
     """
 
     class Meta:
@@ -20,11 +37,10 @@ class ArtistSerializer(serializers.ModelSerializer):
         ]
 
 
-class AlbumSerializer(serializers.ModelSerializer):
+class AlbumPlainSerializer(serializers.ModelSerializer):
     """
-    All fields are shown
+    All fields are shown as plain text
     """
-    artist = ArtistSerializer()
 
     class Meta:
         model = Album
@@ -37,20 +53,29 @@ class AlbumSerializer(serializers.ModelSerializer):
         ]
 
 
-class SongSerializer(serializers.ModelSerializer):
+class ArtistWithAlbums(ArtistPlainSerializer):
     """
-    All fields are shown
+    The albums are shown with details
     """
+    albums = AlbumPlainSerializer(many=True)
 
-    album = AlbumSerializer()
 
-    class Meta:
-        model = Song
-        fields = [
-            "id",
-            "title",
-            "duration",
-            "stream_url",
-            "album",
-            "genre",
-        ]
+class AlbumWithArtistSerializer(AlbumPlainSerializer):
+    """
+    The artist is show with details
+    """
+    artist = ArtistPlainSerializer()
+
+
+class AlbumWithSongsAndArtistSerializer(AlbumWithArtistSerializer):
+    """
+    the artist is shown with details and the songs are shown with details
+    """
+    songs = SongPlainSerializer(many=True)
+
+
+class SongWithAlbumAndArtistSerializer(SongPlainSerializer):
+    """
+    Album is shown with details
+    """
+    album = AlbumWithArtistSerializer()

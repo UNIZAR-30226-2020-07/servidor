@@ -182,5 +182,5 @@ REST_FRAMEWORK = {
 }
 
 REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer_AUTH',
+    'USER_DETAILS_SERIALIZER': 'users.serializers.UserWithPlaylistSerializer_AUTH',
 }
