@@ -10,8 +10,15 @@ from songs.urls import router as router_songs
 from users.urls import router as router_users
 
 router = routers.DefaultRouter()
+
+# add from other routers
 router.extend(router_songs)
 router.extend(router_users)
+
+# add custom urls
+router.addCustomUrl('login', 'rest_login')
+router.addCustomUrl('register', 'rest_register')
+router.addCustomUrl('you', 'rest_user_details')
 
 urlpatterns = [
     path('', include(router.urls)),

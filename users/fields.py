@@ -6,6 +6,7 @@ from rest_framework import serializers
 class ShowDetailsAcceptPkField(serializers.PrimaryKeyRelatedField):
     """
     This field shows details (on GET) but accepts pk identifiers (on POST)
+    Adapted from https://github.com/encode/django-rest-framework/issues/5206#issue-234442095
     """
 
     def __init__(self, serializer, **kwargs):
