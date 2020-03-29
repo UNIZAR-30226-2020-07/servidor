@@ -147,6 +147,20 @@ class Manager:
             # error
             return self.formatErrors(data)
 
+    def getUserPlaylists(self, user_id):
+        url = 'user/' + str(user_id) + '/'
+        data, error = self._fetch(url, None, self.key, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        list_p = []
+        for playlist in data['playlists']:
+            url2 = 'playlist/' + playlist + '/'
+            data2, error = self._fetch(url2, None, self.key, None)
+            list_p = list_p + data2
+
+        return list_p
+
     def register(self, username, email, password1, password2):
         """
         Register a new user
@@ -229,6 +243,14 @@ class Manager:
         if error:
             # error
             return self.formatErrors(data)
+
+    def getFriends(self,user_id):
+        url = 'user/' + str(user_id) + '/'
+        data, error = self._fetch(url, None, self.key, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        return data['friends']
 
     def getCurrentUser(self):
         """
