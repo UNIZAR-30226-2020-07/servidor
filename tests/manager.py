@@ -214,8 +214,7 @@ class Manager:
             # error
             return self.formatErrors(data)
 
-        new_friends = data['friends'] + [followed_user]
-
+        new_friends = [user['id'] for user in data['friends']] + [followed_user]
         data, error = self._fetch(url, {'friends': new_friends}, self.key, 'PATCH')
 
         if error:
@@ -234,11 +233,12 @@ class Manager:
             # error
             return self.formatErrors(data)
 
-        if followed_user in data['friends']:
-            print(data['friends'])
-            data['friends'].remove(followed_user)
-            print(data['friends'])
-            data, error = self._fetch(url, {'friends': data['friends']}, self.key, 'PATCH')
+        if followed_user in [user['id'] for user in data['friends']]:
+            [user['id'] for user in data['friends']].remove(followed_user)
+            data, error = self._fetch(url, {'friends': [user['id'] for user in data['friends']]}, self.key, 'PATCH')
+
+        else:
+            return "No friend found"
 
         if error:
             # error
