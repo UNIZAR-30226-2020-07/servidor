@@ -16,10 +16,10 @@ manager.register('sin_amigos2', 'unAmigo@porfa.pls', 'AFICASNC@@@relleno', 'AFIC
 manager.login('unAmigo@porfa.pls', 'AFICASNC@@@relleno')
 
 c_user = manager.getCurrentUser()
-id = c_user['id']
+current_id = c_user['id']
 
-if manager.addFollowed(id, 2) is not None:
+if manager.addFollowed(current_id, 2) is not None:
     print("Error at adding a user to the Followed list")
 
-if manager.deleteFollowed(id, 2) is not None:
+if manager.deleteFollowed(current_id, 2) is not None:
     print("Error at deleting a user to the Followed list")
