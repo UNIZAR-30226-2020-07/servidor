@@ -16,6 +16,8 @@ class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistWithAlbums
 
+    search_fields = ['name']
+
 
 class AlbumViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -24,6 +26,9 @@ class AlbumViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumWithSongsAndArtistSerializer
 
+    search_fields = ['name']
+    filterset_fields = ['podcast']
+
 
 class SongViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -31,3 +36,5 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Song.objects.all()
     serializer_class = SongWithAlbumAndArtistSerializer
+
+    search_fields = ['title']

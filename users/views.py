@@ -21,6 +21,8 @@ class UserViewSet(mixins.RetrieveModelMixin,
     queryset = CustomUser.objects.all()
     serializer_class = UserWithPlaylistAndFriendsSerializer
 
+    search_fields = ['username', 'email']
+
     def get_permissions(self):
         if self.action in ['update', 'partial_update']:
             # only owner (or admin) users can modify
@@ -34,6 +36,8 @@ class PlaylistViewSet(viewsets.ModelViewSet):
     """
     queryset = Playlist.objects.all()
     serializer_class = PlaylistWithUserAndSongAndAlbumAndArtistSerializer
+
+    search_fields = ['name']
 
     def perform_create(self, serializer):
         # sets the current user when creating an object

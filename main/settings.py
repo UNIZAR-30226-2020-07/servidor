@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'rest_auth.registration',
+    'django_filters',
 
     'drf_yasg',
 
@@ -179,6 +180,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',  # allow auth by token (clients)
         'rest_framework.authentication.SessionAuthentication',  # allow auth by session (web api)
     ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend', 'rest_framework.filters.SearchFilter'],
 }
 
 REST_AUTH_SERIALIZERS = {
