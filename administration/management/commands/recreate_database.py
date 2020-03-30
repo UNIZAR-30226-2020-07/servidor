@@ -8,7 +8,7 @@ Command to automatize the recreation of the sqlite database
 
 Just call it from the command line: $python manage.py recreate_database
 """
-from random import sample
+from random import sample, choice
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -51,6 +51,7 @@ def run():
 
     print('Populating database...')
     populateSongs()
+    populatePodcasts()
     populateUsers()
     print('...done')
 
@@ -113,6 +114,37 @@ def populateSongs():
                 print('Created song:', song)
 
 
+def populatePodcasts():
+    """
+    Populates the database with some episodes/podcasts (from existing artists)
+    """
+    i = 0
+
+    for podcast_param in range(5):
+        # create an podcast for that artist
+        podcast = Album(
+            name="A funny podcast #" + str(podcast_param + 1),
+            artist=getRandomObject(Artist),
+            podcast=True,
+        )
+        podcast.save()
+        print('Created podcast:', podcast)
+        for episode_param in range(5):
+            # create a episode in that podcast
+            episode = Song(
+                title="My funny life #" + str(episode_param + 1),
+                duration=10 * (episode_param + 1),
+                stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
+                # stream_url="debug:{}/{}/{}".format(artist_param, podcast_param, episode_param),
+                album=podcast,
+                genre=Genre.values[i],
+                episode=True,
+            )
+            episode.save()
+            i = (i + 1) % len(Genre.values)
+            print('Created episode:', episode)
+
+
 def populateUsers():
     """
     Populates the database with default users
@@ -139,3 +171,9 @@ def populateUsers():
             playlist.save()
             playlist.songs.set(sample(list(songs), 5))
             print("Created playlist {}".format(playlist))
+
+
+################## utils ###############
+def getRandomObject(Class):
+    items = Class.objects.all()
+    return choice(items)

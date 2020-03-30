@@ -20,6 +20,7 @@ class SongPlainSerializer(serializers.ModelSerializer):
             "stream_url",
             "album",
             "genre",
+            "episode",
         ]
 
 
@@ -49,7 +50,7 @@ class AlbumPlainSerializer(serializers.ModelSerializer):
             "name",
             "songs",
             "artist",
-            # "type",
+            "podcast",
         ]
 
 

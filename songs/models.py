@@ -1,6 +1,7 @@
 """
 List of models
 """
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -43,6 +44,7 @@ class Album(models.Model):
     """
     name = models.CharField(max_length=100)
     artist = models.ForeignKey(Artist, null=True, on_delete=models.SET_NULL, related_name='albums')
+    podcast = models.BooleanField(default=False)
 
     # songs = reverse relation in Song
 
@@ -62,8 +64,15 @@ class Song(models.Model):
         max_length=max(len(e) for e in Genre.__members__.values()),  # automatic max length
         choices=Genre.choices,
     )
+    episode = models.BooleanField(default=False)
 
     # playlists: reverse relation in Playlist
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        # Allow episodes only on podcasts and viceversa
+        if self.episode != self.album.podcast:
+            raise ValidationError('An episode can only be in a Podcast' if self.episode else "A song can't be in a podcast")
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     def __str__(self):
         return self.title
