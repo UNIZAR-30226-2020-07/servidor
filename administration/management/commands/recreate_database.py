@@ -8,7 +8,7 @@ Command to automatize the recreation of the sqlite database
 
 Just call it from the command line: $python manage.py recreate_database
 """
-from random import sample, choice
+from random import sample, choice, randint
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -50,9 +50,13 @@ def run():
     print('...done')
 
     print('Populating database...')
-    populateSongs()
-    populatePodcasts()
-    populateUsers()
+    createArtists()
+    createAlbums(25)
+    createPodcasts(25)
+    createSongs(50)
+    createEpisodes(50)
+    createUsers()
+    createPlaylists(10)
     print('...done')
 
 
@@ -77,77 +81,67 @@ def deleteMigrations():
                 print('Deleted', folder + file)
 
 
-def populateSongs():
-    """
-    Populates the database with some songs/albums/artists
-    """
-    i = 0
-
-    # populate data
-    for artist_param in ['Bob', 'Charly', 'DJ', 'Stanley', 'Luna']:
-        # create the artist
+def createArtists():
+    for artist_param in ['Marie', 'Aelita', 'Miku', 'Pop Singer', 'DJ Pon-3']:
         artist = Artist(
             name=artist_param,
         )
         artist.save()
-        print('Created artist:', artist)
-        for album_param in range(5):
-            # create an album for that artist
-            album = Album(
-                name="My awesome album #" + str(album_param + 1),
-                artist=artist,
-            )
-            album.save()
-            print('Created album:', album)
-            for song_param in range(5):
-                # create a song in that album
-                song = Song(
-                    title="Happy tune #" + str(song_param + 1),
-                    duration=10 * (song_param + 1),
-                    stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
-                    # stream_url="debug:{}/{}/{}".format(artist_param, album_param, song_param),
-                    album=album,
-                    genre=Genre.values[i],
-                )
-                song.save()
-                i = (i + 1) % len(Genre.values)
-                print('Created song:', song)
 
 
-def populatePodcasts():
-    """
-    Populates the database with some episodes/podcasts (from existing artists)
-    """
-    i = 0
+def createAlbums(N):
+    for album_param in range(N):
+        album = Album(
+            name="Album: " + getRandomName(),
+            artist=getRandomObject(Artist),
+        )
+        album.save()
+        print('Created album:', album)
 
-    for podcast_param in range(5):
-        # create an podcast for that artist
+
+def createPodcasts(N):
+    for podcast_param in range(N):
         podcast = Album(
-            name="A funny podcast #" + str(podcast_param + 1),
+            name="Podcast: " + getRandomName(),
             artist=getRandomObject(Artist),
             podcast=True,
         )
         podcast.save()
         print('Created podcast:', podcast)
-        for episode_param in range(5):
-            # create a episode in that podcast
-            episode = Song(
-                title="My funny life #" + str(episode_param + 1),
-                duration=10 * (episode_param + 1),
-                stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
-                # stream_url="debug:{}/{}/{}".format(artist_param, podcast_param, episode_param),
-                album=podcast,
-                genre=Genre.values[i],
-                episode=True,
-            )
-            episode.save()
-            i = (i + 1) % len(Genre.values)
-            print('Created episode:', episode)
 
 
-def populateUsers():
+def createSongs(N):
+    for song_param in range(N):
+        song = Song(
+            title="Song: " + getRandomName(),
+            duration=randint(10, 60 * 5),
+            stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
+            # stream_url=f"debug:{artist_param}/{album_param}/{song_param}",
+            album=getRandomObject(Album, podcast=False),
+            genre=choice(Genre.values),
+        )
+        song.save()
+        print('Created song:', song)
+
+
+def createEpisodes(N):
+    for episode_param in range(N):
+        episode = Song(
+            title="Episode: " + getRandomName(),
+            duration=randint(60 * 5, 60 * 10),
+            stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
+            # stream_url=f"debug:{artist_param}/{album_param}/{song_param}",
+            album=getRandomObject(Album, podcast=True),
+            genre=choice(Genre.values),
+            episode=True
+        )
+        episode.save()
+        print('Created episode:', episode)
+
+
+def createUsers():
     """
-    Populates the database with default users
+    creates the database with default users
     """
     User = get_user_model()
 
@@ -157,23 +151,48 @@ def populateUsers():
 
     # create normal users
     for user_params in ['user', 'user2', 'user3']:
-        User.objects.create_user(username=user_params, email='{0}@{0}.{0}'.format(user_params), password=user_params)
-        print('Created normal user {}'.format(user_params))
+        User.objects.create_user(username=user_params, email=f'{user_params}@{user_params}.{user_params}', password=user_params)
+        print(f'Created normal user {user_params}')
 
-    # create playlists for those users
-    songs = Song.objects.all()
-    for user in User.objects.all():
-        for playlist_param in range(5):
-            playlist = Playlist(
-                name="{}'s playlist #{}".format(user, playlist_param),
-                user=user
-            )
-            playlist.save()
-            playlist.songs.set(sample(list(songs), 5))
-            print("Created playlist {}".format(playlist))
+
+def createPlaylists(N):
+    for playlist_param in range(N):
+        playlist = Playlist(
+            name="Playlist: " + getRandomName(),
+            user=getRandomObject(get_user_model())
+        )
+        playlist.save()
+        playlist.songs.set(getRandomObject(Song, 5))
+        print(f"Created playlist {playlist}")
 
 
 ################## utils ###############
-def getRandomObject(Class):
-    items = Class.objects.all()
-    return choice(items)
+def getRandomObject(Class, k=1, **kwargs):
+    items = Class.objects.filter(**kwargs).all()
+    return choice(items) if k == 1 else sample(list(items), k)
+
+
+def getRandomName():
+    return "The " + choice([
+        "different",
+        "used",
+        "important",
+        "every",
+        "large",
+        "available",
+        "popular",
+        "able",
+        "basic",
+        "known",
+    ]) + " " + choice([
+        "people",
+        "history",
+        "way",
+        "art",
+        "world",
+        "information",
+        "map",
+        "two",
+        "family",
+        "government",
+    ])
