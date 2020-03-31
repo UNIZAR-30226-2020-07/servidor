@@ -38,3 +38,4 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SongWithAlbumAndArtistSerializer
 
     search_fields = ['title']
+    filterset_fields = ['episode']
