@@ -57,7 +57,7 @@ class Song(models.Model):
     Object Song with title, duration (seconds), stream_url for future use and album
     """
     title = models.CharField(max_length=100)
-    duration = models.IntegerField()
+    duration = models.PositiveIntegerField()
     stream_url = models.CharField(max_length=100)
     album = models.ForeignKey(Album, null=True, on_delete=models.SET_NULL, related_name='songs')
     genre = models.CharField(

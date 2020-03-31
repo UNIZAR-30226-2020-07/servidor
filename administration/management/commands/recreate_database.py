@@ -114,7 +114,8 @@ def createSongs(N):
     for song_param in range(N):
         song = Song(
             title=getRandomName(),
-            duration=randint(10, 60 * 5),
+            duration=240,
+            # duration= randint(10, 60 * 5),
             stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
             # stream_url=f"debug:{artist_param}/{album_param}/{song_param}",
             album=getRandomObject(Album, podcast=False),

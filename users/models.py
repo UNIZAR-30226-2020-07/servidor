@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
     # playlists : reverse relation in Playlist
     friends = models.ManyToManyField("self", blank=True, symmetrical=False)
     pause_song = models.ForeignKey(Song, null=True, blank=True, on_delete=models.SET_NULL)
-    pause_second = models.IntegerField(null=True, blank=True)
+    pause_second = models.PositiveIntegerField(null=True, blank=True)
     albums = models.ManyToManyField(Album, blank=True)
 
 
