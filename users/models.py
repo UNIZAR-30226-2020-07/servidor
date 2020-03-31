@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from main import settings
-from songs.models import Song
+from songs.models import Song, Album
 
 
 class CustomUser(AbstractUser):
@@ -13,9 +13,10 @@ class CustomUser(AbstractUser):
     Extends the default user
     """
     # playlists : reverse relation in Playlist
-    friends = models.ManyToManyField("self", blank=True)
+    friends = models.ManyToManyField("self", blank=True, symmetrical=False)
     pause_song = models.ForeignKey(Song, null=True, blank=True, on_delete=models.SET_NULL)
     pause_second = models.IntegerField(null=True, blank=True)
+    albums = models.ManyToManyField(Album, blank=True)
 
 
 class Playlist(models.Model):

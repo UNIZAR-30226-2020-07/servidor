@@ -92,7 +92,7 @@ def createArtists():
 def createAlbums(N):
     for album_param in range(N):
         album = Album(
-            name="Album: " + getRandomName(),
+            name=getRandomName(),
             artist=getRandomObject(Artist),
         )
         album.save()
@@ -102,7 +102,7 @@ def createAlbums(N):
 def createPodcasts(N):
     for podcast_param in range(N):
         podcast = Album(
-            name="Podcast: " + getRandomName(),
+            name=getRandomName(),
             artist=getRandomObject(Artist),
             podcast=True,
         )
@@ -113,7 +113,7 @@ def createPodcasts(N):
 def createSongs(N):
     for song_param in range(N):
         song = Song(
-            title="Song: " + getRandomName(),
+            title=getRandomName(),
             duration=randint(10, 60 * 5),
             stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
             # stream_url=f"debug:{artist_param}/{album_param}/{song_param}",
@@ -127,7 +127,7 @@ def createSongs(N):
 def createEpisodes(N):
     for episode_param in range(N):
         episode = Song(
-            title="Episode: " + getRandomName(),
+            title=getRandomName(),
             duration=randint(60 * 5, 60 * 10),
             stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
             # stream_url=f"debug:{artist_param}/{album_param}/{song_param}",
@@ -146,19 +146,24 @@ def createUsers():
     User = get_user_model()
 
     # create superuser
-    User.objects.create_superuser(username='admin', email='admin@admin.admin', password='admin')
-    print('Created superuser')
+    superuser = User.objects.create_superuser(username='admin', email='admin@admin.admin', password='admin')
+    print(f'Created superuser {superuser}')
 
     # create normal users
     for user_params in ['user', 'user2', 'user3']:
-        User.objects.create_user(username=user_params, email=f'{user_params}@{user_params}.{user_params}', password=user_params)
-        print(f'Created normal user {user_params}')
+        friends = list(User.objects.all())  # to avoid being friends with yourself
+        user = User.objects.create_user(username=user_params, email=f'{user_params}@{user_params}.{user_params}', password=user_params)
+        user.friends.set(friends)
+        user.pause_song = getRandomObject(Song)
+        user.pause_second = randint(1, user.pause_song.duration)
+        user.albums.set(getRandomObject(Album, 5))
+        print(f'Created normal user {user}')
 
 
 def createPlaylists(N):
     for playlist_param in range(N):
         playlist = Playlist(
-            name="Playlist: " + getRandomName(),
+            name=getRandomName(),
             user=getRandomObject(get_user_model())
         )
         playlist.save()
@@ -173,17 +178,21 @@ def getRandomObject(Class, k=1, **kwargs):
 
 
 def getRandomName():
-    return "The " + choice([
+    return choice([
+        "The",
+        "One",
+        "A very",
+    ]) + " " + choice([
         "different",
         "used",
         "important",
-        "every",
         "large",
         "available",
         "popular",
-        "able",
         "basic",
         "known",
+        "difficult",
+        "united",
     ]) + " " + choice([
         "people",
         "history",
