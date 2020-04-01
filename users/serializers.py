@@ -53,7 +53,7 @@ class UserWithPlaylistAndFriendsSerializer(UserPlainSerializer):
     Public information about a user
     """
 
-    playlists = ShowDetailsAcceptPkField(PlaylistPlainSerializer, many=True)
+    playlists = ShowDetailsAcceptPkField(PlaylistPlainSerializer, many=True, read_only=True)
     friends = ShowDetailsAcceptPkField(UserPlainSerializer, many=True)
     albums = ShowDetailsAcceptPkField(AlbumPlainSerializer, many=True)
 
