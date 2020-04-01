@@ -114,12 +114,10 @@ def createSongs(N):
     for song_param in range(N):
         song = Song(
             title=getRandomName(),
-            duration=240,
-            # duration= randint(10, 60 * 5),
-            stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
             # stream_url=f"debug:{artist_param}/{album_param}/{song_param}",
             album=getRandomObject(Album, podcast=False),
             genre=choice(Genre.values),
+            **getRandomSong(),
         )
         song.save()
         print('Created song:', song)
@@ -129,12 +127,10 @@ def createEpisodes(N):
     for episode_param in range(N):
         episode = Song(
             title=getRandomName(),
-            duration=randint(60 * 5, 60 * 10),
-            stream_url="https://docs.google.com/uc?id=1MMJ1YWAxcs-7pVszRCZLGn9-SFReXqsD",
-            # stream_url=f"debug:{artist_param}/{album_param}/{song_param}",
             album=getRandomObject(Album, podcast=True),
             genre=choice(Genre.values),
-            episode=True
+            episode=True,
+            **getRandomSong(),
         )
         episode.save()
         print('Created episode:', episode)
@@ -206,3 +202,13 @@ def getRandomName():
         "family",
         "government",
     ])
+
+
+def getRandomSong():
+    url, length = choice([
+        ("https://docs.google.com/uc?id=1JJUto_oiiSfqIDKNfKMVIYzrzUQe0Rv6", 3 * 60 + 2),
+        ("https://docs.google.com/uc?id=1_HhNC4tp98cfhwj6mn346HsC_ITLOc1V", 4 * 60 + 1),
+        ("https://docs.google.com/uc?id=1hcK8bJIyvHlXgs83S8pq-GfyMpQfTibK", 3 * 60 + 52),
+        ("https://docs.google.com/uc?id=1-xn-yT6O9fum8pUq5vag4J_ElLmrwtfI", 3 * 60 + 59),
+    ])
+    return {'stream_url': url, 'duration': length}
