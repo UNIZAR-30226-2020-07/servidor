@@ -8,5 +8,5 @@ from users.views import UserViewSet, PlaylistViewSet
 # Create a router and register our viewsets with it.
 
 router = DefaultRouter()
-router.register(r'playlist', PlaylistViewSet)
-router.register(r'user', UserViewSet)
+router.register(r'playlists', PlaylistViewSet)
+router.register(r'users', UserViewSet)

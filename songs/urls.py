@@ -8,6 +8,6 @@ from songs.views import ArtistViewSet, AlbumViewSet, SongViewSet
 # Create a router and register our viewsets with it.
 
 router = DefaultRouter()
-router.register(r'artist', ArtistViewSet)
-router.register(r'album', AlbumViewSet)
-router.register(r'songs', SongViewSet)  # TODO: change to singular 'song'
+router.register(r'artists', ArtistViewSet)
+router.register(r'albums', AlbumViewSet)
+router.register(r'songs', SongViewSet)
