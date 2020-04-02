@@ -117,7 +117,7 @@ def createSongs(N):
             # stream_url=f"debug:{artist_param}/{album_param}/{song_param}",
             album=getRandomObject(Album, podcast=False),
             genre=choice(Genre.values),
-            **getRandomSong(),
+            **getDriveSong(),
         )
         song.save()
         print('Created song:', song)
@@ -130,7 +130,7 @@ def createEpisodes(N):
             album=getRandomObject(Album, podcast=True),
             genre=choice(Genre.values),
             episode=True,
-            **getRandomSong(),
+            **getDriveSong(),
         )
         episode.save()
         print('Created episode:', episode)
@@ -204,11 +204,14 @@ def getRandomName():
     ])
 
 
-def getRandomSong():
-    url, length = choice([
-        ("https://docs.google.com/uc?id=1JJUto_oiiSfqIDKNfKMVIYzrzUQe0Rv6", 3 * 60 + 2),
-        ("https://docs.google.com/uc?id=1_HhNC4tp98cfhwj6mn346HsC_ITLOc1V", 4 * 60 + 1),
-        ("https://docs.google.com/uc?id=1hcK8bJIyvHlXgs83S8pq-GfyMpQfTibK", 3 * 60 + 52),
-        ("https://docs.google.com/uc?id=1-xn-yT6O9fum8pUq5vag4J_ElLmrwtfI", 3 * 60 + 59),
+def getDriveSong():
+    id, m, s = choice([
+        ("1JJUto_oiiSfqIDKNfKMVIYzrzUQe0Rv6", 3, 2),
+        ("1_HhNC4tp98cfhwj6mn346HsC_ITLOc1V", 4, 1),
+        ("1hcK8bJIyvHlXgs83S8pq-GfyMpQfTibK", 3, 52),
+        ("1-xn-yT6O9fum8pUq5vag4J_ElLmrwtfI", 3, 59),
     ])
-    return {'stream_url': url, 'duration': length}
+    return {
+        'stream_url': 'https://docs.google.com/uc?id=' + id,
+        'duration': m * 60 + s,
+    }
