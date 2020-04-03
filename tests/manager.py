@@ -91,7 +91,7 @@ class Manager:
         GET playlist
         :param n_playlist: playlist to fetch
         """
-        url = 'playlist/' + n_playlist + '/'
+        url = 'playlists/' + n_playlist + '/'
         data, _ = self._fetch(url)
         return data
 
@@ -99,7 +99,7 @@ class Manager:
         """
         GET all playlist from the server
         """
-        url = 'playlist/'
+        url = 'playlists/'
         while url is not None:
             data, _ = self._fetch(url)
             for playlist in data['results']:
@@ -112,7 +112,7 @@ class Manager:
         :param p_name: name of the playlist
         :param songs: list of songs
         """
-        url = 'playlist/'
+        url = 'playlists/'
         data, error = self._fetch(url, {'name': p_name,
                                         'songs': songs}, self.key, 'POST')
 
@@ -129,7 +129,7 @@ class Manager:
         :param new_name: new name to give to given playlist
         :param new_songs: new list of songs to give to given playlist
         """
-        url = 'playlist/' + n_playlist + '/'
+        url = 'playlists/' + n_playlist + '/'
         data, error = self._fetch(url, {'name': new_name,
                                         'songs': new_songs}, self.key, 'PUT')
         if error:
@@ -141,11 +141,23 @@ class Manager:
         DELETE playlist
         :param n_playlist: playlist to delete
         """
-        url = 'playlist/' + n_playlist + '/'
+        url = 'playlists/' + n_playlist + '/'
         data, error = self._fetch(url, None, self.key, 'DELETE')
         if error:
             # error
             return self.formatErrors(data)
+
+    def getUserPlaylists(self, user_id):
+        url = 'users/' + str(user_id) + '/'
+        data, error = self._fetch(url, None, self.key, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        #list_p = []
+        #for playlist in data['playlists']:
+        #    list_p = list_p + playlist
+
+        return data['playlists']
 
     def register(self, username, email, password1, password2):
         """
@@ -187,6 +199,84 @@ class Manager:
         else:
             # error
             return self.formatErrors(result)
+
+    def addFollowed(self, username_id, followed_user):
+        """
+        ADD a user to the "friend" list of a user
+        :param username_id: principal user
+        :param followed_user: username of the "friend" to add
+        """
+        url = 'users/' + str(username_id) + '/'
+        data, error = self._fetch(url, None, self.key, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+
+        new_friends = [user['id'] for user in data['friends']] + [followed_user]
+        data, error = self._fetch(url, {'friends': new_friends}, self.key, 'PATCH')
+
+        if error:
+            # error
+            return self.formatErrors(data)
+
+    def deleteFollowed(self, username_id, followed_user):
+        """
+        DELETE a user from the "friend" list of a user
+        :param username_id: principal user
+        :param followed_user: username of the "friend" to delete
+        """
+        url = 'users/' + str(username_id) + '/'
+        data, error = self._fetch(url, None, self.key, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+
+        if followed_user in [user['id'] for user in data['friends']]:
+            [user['id'] for user in data['friends']].remove(followed_user)
+            data, error = self._fetch(url, {'friends': [user['id'] for user in data['friends']]}, self.key, 'PATCH')
+
+        else:
+            return "No friend found"
+
+        if error:
+            # error
+            return self.formatErrors(data)
+
+    def getFriends(self, user_id):
+        url = 'users/' + str(user_id) + '/'
+        data, error = self._fetch(url, None, self.key, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        return data['friends']
+
+    def getLastSongPlayed(self, user_id):
+        """
+        GET the information of the last song that the user "user_id" played
+        :param user_id: user from wich to extract last song played
+        """
+        url = 'users/' + str(user_id) + '/'
+        data, error = self._fetch(url, None, self.key, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        return data
+
+    def getUserAlbums(self, user_id):
+        """
+        GET the information of the albums that the user "user_id" has
+        :param user_id: user from wich to extract the albums
+        """
+        url = 'users/' + str(user_id) + '/'
+        data, error = self._fetch(url, None, self.key, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        #list_a = []
+        # for album in data['albums']:
+        #   list_a = list_a + album
+
+        return data['albums']
 
     def getCurrentUser(self):
         """
