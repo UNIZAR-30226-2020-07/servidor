@@ -13,6 +13,8 @@ if '--debug' in sys.argv:
     manager.toggleDebug()
 
 # start
+current_id = None
+
 manager.login('user', 'user')
 idPlaylist = manager.createPlaylist('cuarentena2', [20])
 if not isinstance(idPlaylist, int):
@@ -43,7 +45,17 @@ if manager.deletePlaylist(str(idPlaylist)) is None:
     print("Error at deleting other's playlists")
 
 manager.login('user', 'user')
+
 if manager.getCurrentUser() is None:
     print("Error at change user")
 if manager.deletePlaylist(str(idPlaylist)) is not None:
     print("Error at deleting your own playlist")
+
+c_user = manager.getCurrentUser()
+current_id = c_user['id']
+
+if manager.getUserPlaylists(current_id) is None:
+    print("Error obtaining user playlists")
+
+if manager.getUserAlbums(current_id) is None:
+    print("Error obtaining user albums")
