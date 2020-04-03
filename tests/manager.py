@@ -250,17 +250,40 @@ class Manager:
             return self.formatErrors(data)
         return data['friends']
 
-    def getLastSongPlayed(self, user_id):
+    def getLastSongPlayed(self):
         """
         GET the information of the last song that the user "user_id" played
         :param user_id: user from wich to extract last song played
         """
-        url = 'users/' + str(user_id) + '/'
+        url = 'rest-auth/user/'
         data, error = self._fetch(url, None, self.key, None)
         if error:
             # error
             return self.formatErrors(data)
-        return data
+        return data['pause_song']
+
+    def getLastSecondPlayed(self):
+        """
+        GET the information of the last song that the user "user_id" played
+        :param user_id: user from wich to extract last song played
+        """
+        url = 'rest-auth/user/'
+        data, error = self._fetch(url, None, self.key, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        return data['pause_second']
+
+    def setLasts(self):
+        """
+        GET the information of the last song that the user "user_id" played
+        :param user_id: user from wich to extract last song played
+        """
+        url = 'rest-auth/user/'
+        data, error = self._fetch(url, {'pause_song': 1, 'pause_second': 1}, self.key, 'PATCH')
+        if error:
+            # error
+            return self.formatErrors(data)
 
     def getUserAlbums(self, user_id):
         """
