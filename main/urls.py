@@ -25,6 +25,7 @@ urlpatterns = [
 
     # for testing purposes
     path('', RedirectView.as_view(url='api/v1')),
+    path('heroku', include('heroku.urls')),
 
-    path('egg', lambda request: HttpResponse('Egg!'), name='egg')
+    path('egg', lambda request: HttpResponse('Egg!'), name='egg'),
 ]
