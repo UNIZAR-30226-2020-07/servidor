@@ -1,28 +1,25 @@
 import sys
 
-
-if len(sys.argv) == 1:
-    print("Run all the tests:")
-
+if not '--no-friends' in sys.argv:
     print("Running friends test ...")
+
+    # noinspection PyUnresolvedReferences
+    import tests.test_friends
+
     print("Test ended.")
 
+if not '--no-playlists' in sys.argv:
     print("Running playlist test...")
+
+    # noinspection PyUnresolvedReferences
+    import tests.test_playlists
+
     print("Test ended.")
 
+if not '--no-lastUsersInfo' in sys.argv:
     print("Running user lasts listened song and second test...")
-    print("Test ended.")
 
+    # noinspection PyUnresolvedReferences
+    # import tests.????
 
-if '--friends' in sys.argv:
-    print("Running friends test ...")
-    print("Test ended.")
-
-
-if '--playlists' in sys.argv:
-    print("Running playlist test...")
-    print("Test ended.")
-
-if '--lastUsersInfo' in sys.argv:
-    print("Running user lasts listened song and second test...")
     print("Test ended.")
