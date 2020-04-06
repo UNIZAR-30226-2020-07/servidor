@@ -20,6 +20,6 @@ if not '--no-lastUsersInfo' in sys.argv:
     print("Running user lasts listened song and second test...")
 
     # noinspection PyUnresolvedReferences
-    # import tests.????
+    import tests.test_users
 
     print("Test ended.")
