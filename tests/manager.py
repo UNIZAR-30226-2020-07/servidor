@@ -1,6 +1,4 @@
-import json
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
+import requests
 
 
 class Manager:
@@ -16,54 +14,42 @@ class Manager:
         self.uselocal = False
         self.debug = False
 
-    def _fetch(self, url, body=None, token=None, method=None):
+    def _fetch(self, url, body=None, token=None, method=None, params=None):
         """
         Makes the online petition (GET or POST)
         :param url: url to fetch
         :param body: If json data => POST, if None => GET, other method's are specified on the "method" param
         :param token: authentication token
+        :param params: parameters to the url, dictionary of key:values, for example params={"search":"something"}
         :return: (json, error) where json is the result as json, and error is a boolean indicating if there was an error
         """
 
+        # method
+        if method is None:
+            method = "GET" if body is None else "POST"
+
         # url
         if not url.startswith("http"):
-            url = (self.BASE_URL_LOCAL if self.uselocal else self.BASE_URL) + url
+            url = (self.BASE_URL_LOCAL if self.uselocal else self.BASE_URL) + url + ("/" if not url.endswith("/") else "")
 
-        # format json body
-        if body is None:
-            data = None
-        else:
-            data = bytes(json.dumps(body), encoding='utf8')  # urlencode(body).encode()
-
-        # prepare token header
-        if token is None:
-            headers = {}
-        else:
-            headers = {'Authorization': 'Token {}'.format(token)}
-        headers['Content-Type'] = 'application/json'
-        headers['Accept'] = 'application/json'
+        # headers
+        headers = {'Authorization': f'Token {token}'} if token is not None else {}
 
         # make request
-        request = Request(url=url, data=data, headers=headers, method=method)
-
-        try:
-            # get response
-            result = urlopen(request).read().decode()
-            error = False
-        except HTTPError as e:
-            # get response in case of error
-            if e.code is 500:
-                # server error
-                print("Server error")
-                raise e
-            result = e.read().decode()
-            error = True
+        r = requests.request(method=method, url=url, params=params, json=body, headers=headers)
 
         # parse and return
-        jsonObject = json.loads(result) if result is not None and result is not '' else None
+        code = r.status_code
+        try:
+            jsonObject = r.json()
+        except ValueError:
+            jsonObject = None
+
+        # debug
         if self.debug:
-            print(url, "=>", jsonObject)  # debug
-        return jsonObject, error
+            print(f"{url} => ({code}) => {jsonObject}")
+
+        return jsonObject, not 200 <= code < 300
 
     def formatErrors(self, result):
         """
@@ -79,7 +65,7 @@ class Manager:
         """
         GET songs
         """
-        url = 'songs/'
+        url = 'songs'
         while url is not None:
             data, _ = self._fetch(url)
             for song in data['results']:
@@ -91,7 +77,7 @@ class Manager:
         GET playlist
         :param n_playlist: playlist to fetch
         """
-        url = 'playlists/' + n_playlist + '/'
+        url = 'playlists/' + n_playlist
         data, _ = self._fetch(url)
         return data
 
@@ -99,7 +85,7 @@ class Manager:
         """
         GET all playlist from the server
         """
-        url = 'playlists/'
+        url = 'playlists'
         while url is not None:
             data, _ = self._fetch(url)
             for playlist in data['results']:
@@ -112,7 +98,7 @@ class Manager:
         :param p_name: name of the playlist
         :param songs: list of songs
         """
-        url = 'playlists/'
+        url = 'playlists'
         data, error = self._fetch(url, {'name': p_name,
                                         'songs': songs}, self.key, 'POST')
 
@@ -129,7 +115,7 @@ class Manager:
         :param new_name: new name to give to given playlist
         :param new_songs: new list of songs to give to given playlist
         """
-        url = 'playlists/' + n_playlist + '/'
+        url = 'playlists/' + n_playlist
         data, error = self._fetch(url, {'name': new_name,
                                         'songs': new_songs}, self.key, 'PUT')
         if error:
@@ -141,20 +127,20 @@ class Manager:
         DELETE playlist
         :param n_playlist: playlist to delete
         """
-        url = 'playlists/' + n_playlist + '/'
+        url = 'playlists/' + n_playlist
         data, error = self._fetch(url, None, self.key, 'DELETE')
         if error:
             # error
             return self.formatErrors(data)
 
     def getUserPlaylists(self, user_id):
-        url = 'users/' + str(user_id) + '/'
+        url = 'users/' + str(user_id)
         data, error = self._fetch(url, None, self.key, None)
         if error:
             # error
             return self.formatErrors(data)
-        #list_p = []
-        #for playlist in data['playlists']:
+        # list_p = []
+        # for playlist in data['playlists']:
         #    list_p = list_p + playlist
 
         return data['playlists']
@@ -163,7 +149,7 @@ class Manager:
         """
         Register a new user
         """
-        result, error = self._fetch('rest-auth/registration/', {
+        result, error = self._fetch('rest-auth/registration', {
             'username': username,
             'email': email,
             'password1': password1,
@@ -187,7 +173,7 @@ class Manager:
         else:
             username = username_email
             email = ''
-        result, error = self._fetch('rest-auth/login/', {
+        result, error = self._fetch('rest-auth/login', {
             'email': email,
             'username': username,
             'password': password,
@@ -206,7 +192,7 @@ class Manager:
         :param username_id: principal user
         :param followed_user: username of the "friend" to add
         """
-        url = 'users/' + str(username_id) + '/'
+        url = 'users/' + str(username_id)
         data, error = self._fetch(url, None, self.key, None)
         if error:
             # error
@@ -225,7 +211,7 @@ class Manager:
         :param username_id: principal user
         :param followed_user: username of the "friend" to delete
         """
-        url = 'users/' + str(username_id) + '/'
+        url = 'users/' + str(username_id)
         data, error = self._fetch(url, None, self.key, None)
         if error:
             # error
@@ -243,7 +229,7 @@ class Manager:
             return self.formatErrors(data)
 
     def getFriends(self, user_id):
-        url = 'users/' + str(user_id) + '/'
+        url = 'users/' + str(user_id)
         data, error = self._fetch(url, None, self.key, None)
         if error:
             # error
@@ -255,7 +241,7 @@ class Manager:
         GET the information of the last song that the user "user_id" played
         :param user_id: user from wich to extract last song played
         """
-        url = 'rest-auth/user/'
+        url = 'rest-auth/user'
         data, error = self._fetch(url, None, self.key, None)
         if error:
             # error
@@ -267,7 +253,7 @@ class Manager:
         GET the information of the last song that the user "user_id" played
         :param user_id: user from wich to extract last song played
         """
-        url = 'rest-auth/user/'
+        url = 'rest-auth/user'
         data, error = self._fetch(url, None, self.key, None)
         if error:
             # error
@@ -279,7 +265,7 @@ class Manager:
         GET the information of the last song that the user "user_id" played
         :param user_id: user from wich to extract last song played
         """
-        url = 'rest-auth/user/'
+        url = 'rest-auth/user'
         data, error = self._fetch(url, {'pause_song': 1, 'pause_second': 1}, self.key, 'PATCH')
         if error:
             # error
@@ -290,12 +276,12 @@ class Manager:
         GET the information of the albums that the user "user_id" has
         :param user_id: user from wich to extract the albums
         """
-        url = 'users/' + str(user_id) + '/'
+        url = 'users/' + str(user_id)
         data, error = self._fetch(url, None, self.key, None)
         if error:
             # error
             return self.formatErrors(data)
-        #list_a = []
+        # list_a = []
         # for album in data['albums']:
         #   list_a = list_a + album
 

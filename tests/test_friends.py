@@ -13,7 +13,7 @@ if '--local' in sys.argv:
 
 
 # start
-current_id = None
+current_id = 1
 
 if manager.addFollowed(current_id, -3) is None:
     print("Error adding, invalid user without log in")
