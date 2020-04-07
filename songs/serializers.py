@@ -62,27 +62,28 @@ class AlbumPlainSerializer(serializers.ModelSerializer):
 
 class ArtistWithAlbums(ArtistPlainSerializer):
     """
-    The albums are shown with details
+    albums is serialized as plain
     """
     albums = AlbumPlainSerializer(many=True)
 
 
 class AlbumWithArtistSerializer(AlbumPlainSerializer):
     """
-    The artist is show with details
+    artist is serialized as plain
     """
     artist = ArtistPlainSerializer()
 
 
 class AlbumWithSongsAndArtistSerializer(AlbumWithArtistSerializer):
     """
-    the artist is shown with details and the songs are shown with details
+    artist is serialized as plain
+    songs is serialized as plain
     """
     songs = SongPlainSerializer(many=True)
 
 
 class SongWithAlbumAndArtistSerializer(SongPlainSerializer):
     """
-    Album is shown with details
+    albums is serialized with artist serialized as plain
     """
     album = AlbumWithArtistSerializer(read_only=True)

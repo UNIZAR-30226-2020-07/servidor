@@ -14,11 +14,13 @@ class ValorationField(IntegerField):
         super().__init__(**kwargs)
 
     def to_representation(self, song):
+        """
+        return the valoration of the registered user, if exists
+        """
         user = self.context['request'].user
         if user.is_authenticated:
             query = Valoration.objects.filter(user=user, song=song)
             if query.exists():
-                # get the valoration of a registered user, if exists
                 return query.get().valoration
 
     def to_internal_value(self, valoration):

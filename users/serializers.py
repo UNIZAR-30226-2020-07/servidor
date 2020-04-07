@@ -26,14 +26,14 @@ class PlaylistPlainSerializer(serializers.ModelSerializer):
 
 class PlaylistWithSongAndAlbumAndArtistSerializer(PlaylistPlainSerializer):
     """
-    Songs/album/artist are shown with details
+    songs is serialized with albums serialized with artist serialized as plain
     """
     songs = ShowDetailsAcceptPkField(SongWithAlbumAndArtistSerializer, many=True)
 
 
 class UserPlainSerializer(serializers.ModelSerializer):
     """
-    User information plain
+    All fields are shown as plain text
     """
 
     class Meta:
@@ -51,6 +51,10 @@ class UserPlainSerializer(serializers.ModelSerializer):
 class UserWithPlaylistAndFriendsSerializer(UserPlainSerializer):
     """
     Public information about a user
+
+    playlists is serializer as plain
+    friends is serializer as plain
+    albums is serializer as plain
     """
 
     playlists = ShowDetailsAcceptPkField(PlaylistPlainSerializer, many=True, read_only=True)
@@ -61,6 +65,11 @@ class UserWithPlaylistAndFriendsSerializer(UserPlainSerializer):
 class UserAuthSerializer(UserWithPlaylistAndFriendsSerializer):
     """
     Public + private information about a user
+
+    playlists is serializer as plain
+    friends is serializer as plain
+    albums is serializer as plain
+    pause_song is serializer with albums serialized with artist serialized as plain
     """
 
     pause_song = ShowDetailsAcceptPkField(SongWithAlbumAndArtistSerializer)
@@ -80,7 +89,8 @@ class UserAuthSerializer(UserWithPlaylistAndFriendsSerializer):
 
 class PlaylistWithUserAndSongAndAlbumAndArtistSerializer(PlaylistWithSongAndAlbumAndArtistSerializer):
     """
-    User and songs/album/artist are shown with details
+    songs is serialized with albums serialized with artist serialized as plain
+    user is serialized as plain
     """
 
     user = UserPlainSerializer(read_only=True)
