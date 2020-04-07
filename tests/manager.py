@@ -287,6 +287,81 @@ class Manager:
 
         return data['albums']
 
+    def searchSong(self, search_parameter):
+        """
+        GET elements that have the desired parameter in the songs search_fields
+        :param seach_parameter: desired match to find on the search
+        """
+        url = 'songs/'
+        data, error = self._fetch(url, None, self.key, None, {"search": search_parameter})
+        if error:
+            # error
+            return self.formatErrors(data)
+        if data['count'] == 0:
+            return None
+        else:
+            return data['results']
+
+    def searchAlbum(self, search_parameter):
+        """
+        GET elements that have the desired parameter in the albums search_fields
+        :param seach_parameter: desired match to find on the search
+        """
+        url = 'albums/'
+        data, error = self._fetch(url, None, self.key, None, {"search": search_parameter})
+        if error:
+            # error
+            return self.formatErrors(data)
+        if data['count'] == 0:
+            return None
+        else:
+            return data['results']
+
+    def searchArtists(self, search_parameter):
+        """
+        GET elements that have the desired parameter in the Artists search_fields
+        :param seach_parameter: desired match to find on the search
+        """
+        url = 'artists/'
+        data, error = self._fetch(url, None, self.key, None, {"search": search_parameter})
+        if error:
+            # error
+            return self.formatErrors(data)
+        if data['count'] == 0:
+            return None
+        else:
+            return data['results']
+
+    def searchPlaylists(self, search_parameter):
+        """
+        GET elements that have the desired parameter in the playlists search_fields
+        :param seach_parameter: desired match to find on the search
+        """
+        url = 'playlists/'
+        data, error = self._fetch(url, None, self.key, None, {"search": search_parameter})
+        if error:
+            # error
+            return self.formatErrors(data)
+        if data['count'] == 0:
+            return None
+        else:
+            return data['results']
+
+    def searchUser(self, search_parameter):
+        """
+        GET elements that have the desired parameter in the users search_fields
+        :param seach_parameter: desired match to find on the search
+        """
+        url = 'users/'
+        data, error = self._fetch(url, None, self.key, None, {"search": search_parameter})
+        if error:
+            # error
+            return self.formatErrors(data)
+        if data['count'] == 0:
+            return None
+        else:
+            return data['results']
+
     def getCurrentUser(self):
         """
         Returns the current user data

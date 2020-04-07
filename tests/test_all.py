@@ -23,3 +23,11 @@ if not '--no-lastUsersInfo' in sys.argv:
     import tests.test_users
 
     print("Test ended.")
+
+if not '--no-search' in sys.argv:
+    print("Running search test...")
+
+    # noinspection PyUnresolvedReferences
+    import tests.test_search
+
+    print("Test ended.")
