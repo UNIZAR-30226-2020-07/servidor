@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import GenericViewSet
 
 from songs.models import Song, Artist, Album
-from songs.serializers import AlbumWithSongsAndArtistSerializer, ArtistWithAlbums, SongPlainSerializer
+from songs.serializers import AlbumWithSongsAndArtistSerializer, ArtistWithAlbums, SongWithAlbumAndArtistSerializer
 # Default views for a rest api (with readonly permissions for all users)
 from users.models import Valoration
 
@@ -43,7 +43,7 @@ class SongViewSet(mixins.RetrieveModelMixin,
     """
 
     queryset = Song.objects.all()
-    serializer_class = SongPlainSerializer
+    serializer_class = SongWithAlbumAndArtistSerializer
 
     search_fields = ['title']
     filterset_fields = ['episode']
