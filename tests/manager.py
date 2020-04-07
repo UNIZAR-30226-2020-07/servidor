@@ -3,7 +3,6 @@ import requests
 
 class Manager:
     BASE_URL = 'https://ps-20-server-django-app.herokuapp.com/api/v1/'
-
     BASE_URL_LOCAL = 'http://127.0.0.1:8000/api/v1/'
 
     def __init__(self):

@@ -15,7 +15,7 @@ from django.core.management.base import BaseCommand
 
 from songs.models import Song, Artist, Album, Genre
 # Registers the command in Django
-from users.models import Playlist
+from users.models import Playlist, Valoration
 
 
 class Command(BaseCommand):
@@ -57,6 +57,7 @@ def run():
     createEpisodes(50)
     createUsers()
     createPlaylists(10)
+    createValorations()
     print('...done')
 
 
@@ -166,6 +167,15 @@ def createPlaylists(N):
         playlist.save()
         playlist.songs.set(getRandomObject(Song, 5))
         print(f"Created playlist {playlist}")
+
+
+def createValorations():
+    for user in get_user_model().objects.all():
+        for song in Song.objects.all():
+            value = randint(0, 8)
+            if value <= 4:
+                valoration = Valoration.objects.create(user=user, song=song, valoration=value)
+                print(f"Added valoration {valoration}")
 
 
 ################## utils ###############

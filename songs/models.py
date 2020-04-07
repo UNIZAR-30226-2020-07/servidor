@@ -67,11 +67,12 @@ class Song(models.Model):
     episode = models.BooleanField(default=False)
 
     # playlists: reverse relation in Playlist
+    # user_valoration: reverse relation in User
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         # Allow episodes only on podcasts and viceversa
         if self.episode != self.album.podcast:
-            raise ValidationError('An episode can only be in a Podcast' if self.episode else "A song can't be in a podcast")
+            raise ValidationError('An episode can only be in a podcast' if self.episode else "A song can't be in a podcast")
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     def __str__(self):
