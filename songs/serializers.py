@@ -3,6 +3,7 @@ A serializer represents how an object is converted into JSON
 """
 from rest_framework import serializers
 
+from songs.fields import ValorationField
 from songs.models import Song, Artist, Album
 
 
@@ -11,9 +12,11 @@ class SongPlainSerializer(serializers.ModelSerializer):
     All fields are shown as plain text
     """
 
+    user_valoration = ValorationField()
+
     class Meta:
         model = Song
-        fields = [
+        read_only_fields = [
             "id",
             "title",
             "duration",
@@ -21,6 +24,9 @@ class SongPlainSerializer(serializers.ModelSerializer):
             "album",
             "genre",
             "episode",
+        ]
+        fields = read_only_fields + [
+            "user_valoration",  # the writable field
         ]
 
 
@@ -79,4 +85,4 @@ class SongWithAlbumAndArtistSerializer(SongPlainSerializer):
     """
     Album is shown with details
     """
-    album = AlbumWithArtistSerializer()
+    album = AlbumWithArtistSerializer(read_only=True)

@@ -14,7 +14,7 @@ class ShowDetailsAcceptPkField(serializers.PrimaryKeyRelatedField):
         self.serializer_class = serializer
 
     def to_representation(self, value):
-        return self.serializer_class(value, **self._kwargs).data
+        return self.serializer_class(value, context=self.context, **self._kwargs).data
 
     def get_queryset(self):
         if self.queryset:

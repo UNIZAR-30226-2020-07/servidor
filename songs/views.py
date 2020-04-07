@@ -2,16 +2,19 @@
 Define how pages are shown to the user.
 Create your views here.
 """
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.viewsets import GenericViewSet
 
 from songs.models import Song, Artist, Album
-from songs.serializers import SongWithAlbumAndArtistSerializer, AlbumWithSongsAndArtistSerializer, ArtistWithAlbums
-
-
+from songs.serializers import AlbumWithSongsAndArtistSerializer, ArtistWithAlbums, SongPlainSerializer
 # Default views for a rest api (with readonly permissions for all users)
+from users.models import Valoration
+
+
 class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    Artists are readonly
+    List of artists
     """
     queryset = Artist.objects.all()
     serializer_class = ArtistWithAlbums
@@ -21,7 +24,7 @@ class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
 
 class AlbumViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    Albums are readonly
+    List of albums
     """
     queryset = Album.objects.all()
     serializer_class = AlbumWithSongsAndArtistSerializer
@@ -30,12 +33,31 @@ class AlbumViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['podcast']
 
 
-class SongViewSet(viewsets.ReadOnlyModelViewSet):
+class SongViewSet(mixins.RetrieveModelMixin,
+                  mixins.UpdateModelMixin,
+                  mixins.ListModelMixin,
+                  GenericViewSet):
     """
-    Songs are readonly
+    List of songs
+    Includes the current user valoration which can be edited
     """
+
     queryset = Song.objects.all()
-    serializer_class = SongWithAlbumAndArtistSerializer
+    serializer_class = SongPlainSerializer
 
     search_fields = ['title']
     filterset_fields = ['episode']
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def perform_update(self, serializer):
+        """
+        The user_valoration field should be saved differently
+        """
+        Valoration.objects.update_or_create(
+            user_id=self.request.user.id,
+            song_id=serializer.instance.id,
+            defaults={'valoration': serializer.validated_data['user_valoration']},
+        )
+
+        serializer.data['user_valoration'] = serializer.validated_data['user_valoration']
