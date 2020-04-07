@@ -1,10 +1,13 @@
 """
 A serializer represents how an object is converted into JSON
 """
+from django.db.models import Avg, Count
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 from songs.fields import ValorationField
 from songs.models import Song, Artist, Album
+from users.models import Valoration
 
 
 class SongPlainSerializer(serializers.ModelSerializer):
@@ -13,6 +16,20 @@ class SongPlainSerializer(serializers.ModelSerializer):
     """
 
     user_valoration = ValorationField()
+    avg_valoration = SerializerMethodField()
+    count_valoration = SerializerMethodField()
+
+    def get_avg_valoration(self, song):
+        """
+        Average valoration of all users
+        """
+        return Valoration.objects.filter(song=song).aggregate(avg=Avg('valoration'))['avg']
+
+    def get_count_valoration(self, song):
+        """
+        Average valoration of all users
+        """
+        return Valoration.objects.filter(song=song).aggregate(count=Count('valoration'))['count']
 
     class Meta:
         model = Song
@@ -24,6 +41,8 @@ class SongPlainSerializer(serializers.ModelSerializer):
             "album",
             "genre",
             "episode",
+            "avg_valoration",
+            "count_valoration",
         ]
         fields = read_only_fields + [
             "user_valoration",  # the writable field
