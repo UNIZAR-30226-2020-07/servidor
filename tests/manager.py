@@ -391,6 +391,30 @@ class Manager:
         else:
             return data['results']
 
+    def setValorations(self, song_id, valoration):
+        """
+        GET elements that have the desired parameter in the users search_fields
+        :param seach_parameter: desired match to find on the search
+        """
+        url = 'songs/' + str(song_id)
+        data, error = self._fetch(url, {"user_valoration": valoration}, self.key, 'PATCH', None)
+        if error:
+            return None
+        else:
+            return data
+
+    def readValorations(self, song_id):
+        """
+        GET elements that have the desired parameter in the users search_fields
+        :param seach_parameter: desired match to find on the search
+        """
+        url = 'songs/' + str(song_id)
+        data, error = self._fetch(url, None, self.key, None, None)
+        if error:
+            return None
+        else:
+            return data['user_valoration']
+
     def getCurrentUser(self):
         """
         Returns the current user data

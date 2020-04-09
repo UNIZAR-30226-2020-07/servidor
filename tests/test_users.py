@@ -40,3 +40,9 @@ if manager.getLastSongPlayed() is None:
 if manager.getLastSecondPlayed() is None:
     print("Error at reading last second from user while logged in")
     print(current_id)
+
+if manager.setValorations(1, 5) is None:
+    print("Error at setting valoration for song 1")
+
+if manager.readValorations(1) is not 5:
+    print("Error at setting valoration for song 1")
