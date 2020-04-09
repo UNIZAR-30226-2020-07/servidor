@@ -301,6 +301,21 @@ class Manager:
         else:
             return data['results']
 
+    def searchEpisode(self, search_parameter):
+        """
+        GET elements that have the desired parameter in the songs search_fields
+        :param seach_parameter: desired match to find on the search
+        """
+        url = 'songs/'
+        data, error = self._fetch(url, None, self.key, None, {"episode": "true"})
+        if error:
+           # error
+           return self.formatErrors(data)
+        if data['count'] == 0:
+           return None
+        else:
+           return data['results']
+
     def searchAlbum(self, search_parameter):
         """
         GET elements that have the desired parameter in the albums search_fields
@@ -308,6 +323,21 @@ class Manager:
         """
         url = 'albums/'
         data, error = self._fetch(url, None, self.key, None, {"search": search_parameter})
+        if error:
+            # error
+            return self.formatErrors(data)
+        if data['count'] == 0:
+            return None
+        else:
+            return data['results']
+
+    def searchPodcast(self, search_parameter):
+        """
+        GET elements that have the desired parameter in the albums search_fields
+        :param seach_parameter: desired match to find on the search
+        """
+        url = 'albums/'
+        data, error = self._fetch(url, None, self.key, None, {"podcast": "true"})
         if error:
             # error
             return self.formatErrors(data)

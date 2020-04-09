@@ -27,6 +27,12 @@ if manager.searchAlbum('important') is None:
 if manager.searchPlaylists('world') is None:
     print("Error, no playlist with that name")
 
+if manager.searchEpisode('world') is None:
+    print("Error, no episodes on BBDD")
+
+if manager.searchPodcast('world') is None:
+    print("Error, no podcast on BBDD")
+
 # search user by username
 if manager.searchUser('user') is None:
     print("Error, no username with that username")
