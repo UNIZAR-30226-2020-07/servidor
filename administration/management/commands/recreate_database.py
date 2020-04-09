@@ -172,8 +172,8 @@ def createPlaylists(N):
 def createValorations():
     for user in get_user_model().objects.all():
         for song in Song.objects.all():
-            value = randint(0, 8)
-            if value <= 4:
+            value = randint(1, 9)
+            if value <= 5:
                 valoration = Valoration.objects.create(user=user, song=song, valoration=value)
                 print(f"Added valoration {valoration}")
 

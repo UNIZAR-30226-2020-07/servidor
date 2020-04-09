@@ -39,7 +39,7 @@ class Valoration(models.Model):
     """
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
-    valoration = models.IntegerField(blank=True, null=True, validators=[MaxValueValidator(4), MinValueValidator(0)])
+    valoration = models.IntegerField(blank=True, null=True, validators=[MaxValueValidator(5), MinValueValidator(1)])
 
     def __str__(self):
         return f"{self.user}-{self.song}: {self.valoration}"
