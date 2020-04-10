@@ -51,10 +51,8 @@ def run():
 
     print('Populating database...')
     createArtists()
-    createAlbums()
-    createPodcasts(25)
-    createSongs()
-    createEpisodes(50)
+    createAlbumsAndPodcasts()
+    createSongsAndEpisodes()
     createUsers()
     createPlaylists(10)
     createValorations()
@@ -83,71 +81,45 @@ def deleteMigrations():
 
 
 def createArtists():
-    for artist_param in set(artist for _, artist, _, _, _ in songs_drive):
+    """
+    create artists
+    """
+    for _, artist_name in getDriveArtists():
         artist = Artist(
-            name=artist_param,
+            name=artist_name,
         )
         artist.save()
         print('Created artist:', artist)
 
 
-def createAlbums():
-    for artist in Artist.objects.all():
+def createAlbumsAndPodcasts():
+    """
+    create the albums and podcasts
+    """
+    for episode, artist_name in getDriveArtists():
+        artist = Artist.objects.get(name=artist_name)
         album = Album(
-            name=f"No Copyright Music of {artist.name}",
+            name=f"{'Podcast' if episode else 'No Copyright Music'} of {artist_name}",
             artist=artist,
+            podcast=episode
         )
         album.save()
-        print('Created album:', album)
+        print('Created', 'podcast' if episode else 'album', ':', album)
 
 
-def createPodcasts(N):
-    for podcast_param in range(N):
-        podcast = Album(
-            name=getRandomName(),
-            artist=getRandomObject(Artist),
-            podcast=True,
-        )
-        podcast.save()
-        print('Created podcast:', podcast)
-
-
-def createSongs():
-
-    for song_param in getDriveElements():
-
-        albumToAdd = None
-
-        for album in Album.objects.all():
-            if album.artist.name == song_param['artist'] and albumToAdd is None:
-                print("encontrado")
-                albumToAdd = album
-
-
+def createSongsAndEpisodes():
+    """
+    create the episodes and podcasts
+    """
+    for episode, artist_name, song_params in getDriveSongs():
         song = Song(
-            album=albumToAdd,
+            album=Artist.objects.get(name=artist_name).albums.get(podcast=episode),
             genre=choice(Genre.values),
-            stream_url=song_param['stream_url'],
-            duration=song_param['duration'],
-            title=song_param['title'],
-
+            episode=episode,
+            **song_params,
         )
-
         song.save()
-        print('Created song:', song)
-
-
-def createEpisodes(N):
-    for episode_param in range(N):
-        episode = Song(
-            album=getRandomObject(Album, podcast=True),
-            genre=choice(Genre.values),
-            episode=True,
-            **choice(getDriveElementsEpisodes(True)),
-        )
-        episode.title = getRandomName()
-        episode.save()
-        print('Created episode:', episode)
+        print('Created', 'episode' if episode else 'song', ':', song)
 
 
 def createUsers():
@@ -168,28 +140,33 @@ def createUsers():
         user.pause_song = getRandomObject(Song)
         user.pause_second = randint(1, user.pause_song.duration)
         user.albums.set(getRandomObject(Album, 5))
-        print(f'Created normal user {user}')
+        print('Created normal user:', user)
 
 
 def createPlaylists(N):
+    """
+    creates N playlists
+    """
     for playlist_param in range(N):
         playlist = Playlist(
             name=getRandomName(),
             user=getRandomObject(get_user_model())
-
         )
         playlist.save()
         playlist.songs.set(getRandomObject(Song, 5))
-        print(f"Created playlist {playlist}")
+        print("Created playlist:", playlist)
 
 
 def createValorations():
+    """
+    creates some valorations
+    """
     for user in get_user_model().objects.all():
         for song in Song.objects.all():
             value = randint(1, 9)
             if value <= 5:
                 valoration = Valoration.objects.create(user=user, song=song, valoration=value)
-                print(f"Added valoration {valoration}")
+                print("Added valoration:", valoration)
 
 
 ################## utils ###############
@@ -228,29 +205,39 @@ def getRandomName():
     ])
 
 
-def getDriveElements(episodes=False):
-    list = episodes_drive if episodes else songs_drive
-    return [{
-        'stream_url': 'https://docs.google.com/uc?id=' + id,
-        'duration': m * 60 + s,
-        'title': name,
-        'artist': artist,
-    } for name, artist, id, m, s in list]
+################ Drive ##################
+
+def getDriveArtists():
+    """
+    Returns the unique artists from drive folders
+    [(episode[boolean], artist_name[string])]
+    """
+    return set((e, a) for e, a, _ in getDriveSongs())
 
 
-def getDriveElementsEpisodes(episodes=True):
-    list = episodes_drive if episodes else songs_drive
-    return [{
-        'stream_url': 'https://docs.google.com/uc?id=' + id,
-        'duration': m * 60 + s,
-        'title': name,
-    } for name, artist, id, m, s in list]
+def getDriveSongs():
+    """
+    Returns all the songs (and episodes) in drive
+    [(episode[boolean], artist_name[string], params[object])]
+    """
+    elements = []
+    for name, artist, id, m, s in episodes_drive:
+        elements.append((True, name, artist, id, m, s))
+    for name, artist, id, m, s in songs_drive:
+        elements.append((False, name, artist, id, m, s))
+
+    for episode, name, artist, id, m, s in elements:
+        yield (episode, artist, {
+            'stream_url': 'https://docs.google.com/uc?id=' + id,
+            'duration': m * 60 + s,
+            'title': name,
+        })
+
 
 ###########
 episodes_drive = [
     ("my-hero-academia-ost-you-say-run", "MHA", "1hcK8bJIyvHlXgs83S8pq-GfyMpQfTibK", 3, 52),
-    ("jojo-part-5-golden-wind-opening-2-fulluragirimono-no-requiemby-daisuke-hasegawa", "JoJos",
-     "1-xn-yT6O9fum8pUq5vag4J_ElLmrwtfI", 3, 59),
+    ("jojo-part-5-golden-wind-opening-2-fulluragirimono-no-requiemby-daisuke-hasegawa", "JoJos", "1-xn-yT6O9fum8pUq5vag4J_ElLmrwtfI", 3, 59),
     ("the-best-day-ever", "Vainas de otakus", "1JJUto_oiiSfqIDKNfKMVIYzrzUQe0Rv6", 3, 2),
 ]
 songs_drive = [
