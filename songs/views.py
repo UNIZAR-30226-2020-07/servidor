@@ -2,11 +2,13 @@
 Define how pages are shown to the user.
 Create your views here.
 """
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import GenericViewSet
 
 from songs.models import Song, Artist, Album
+from songs.search import SongSearch
 from songs.serializers import AlbumWithSongsAndArtistSerializer, ArtistWithAlbums, SongWithAlbumAndArtistSerializer
 # Default views for a rest api (with readonly permissions for all users)
 from users.models import Valoration
@@ -45,7 +47,7 @@ class SongViewSet(mixins.RetrieveModelMixin,
     queryset = Song.objects.all()
     serializer_class = SongWithAlbumAndArtistSerializer
 
-    search_fields = ['title']
+    filter_backends = [DjangoFilterBackend, SongSearch, ]
     filterset_fields = ['episode']
 
     permission_classes = [IsAuthenticatedOrReadOnly]
