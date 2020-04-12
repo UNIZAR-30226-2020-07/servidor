@@ -15,13 +15,13 @@ if '--debug' in sys.argv:
 # start
 
 # Existing elements
-if manager.searchSong('Basic') is None:
+if manager.searchSong('the') is None:
     print("Error, no songs with that title")
 
-if manager.searchArtists('Miku') is None:
+if manager.searchArtists('jojo') is None:
     print("Error, no artist with that name")
 
-if manager.searchAlbum('important') is None:
+if manager.searchAlbum('jojo') is None:
     print("Error, no album with that name")
 
 if manager.searchPlaylists('world') is None:
