@@ -2,9 +2,13 @@
 Define how pages are shown to the user.
 Create your views here.
 """
+from random import sample
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, mixins
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from songs.models import Song, Artist, Album
@@ -63,3 +67,20 @@ class SongViewSet(mixins.RetrieveModelMixin,
         )
 
         serializer.data['user_valoration'] = serializer.validated_data['user_valoration']
+
+    @action(detail=False, filter_backends=[])
+    def recommended(self, request):
+        # self.request.user.is_authenticated
+
+        # consider creating real recommendations, for now just return random ones
+        n = 25
+        ids = sample(list(Song.objects.values_list('id', flat=True)), n)
+        recommendations = Song.objects.filter(id__in=ids).order_by('?')
+
+        page = self.paginate_queryset(recommendations)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(recommendations, many=True)
+        return Response(serializer.data)
