@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',  # required to allow deleting users
     'rest_auth.registration',
     'django_filters',
 
