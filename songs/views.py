@@ -70,9 +70,11 @@ class SongViewSet(mixins.RetrieveModelMixin,
 
     @action(detail=False, filter_backends=[])
     def recommended(self, request):
-        # self.request.user.is_authenticated
-
+        """
+        Return recommended songs
+        """
         # consider creating real recommendations, for now just return random ones
+        # self.request.user.is_authenticated
         n = 25
         ids = sample(list(Song.objects.values_list('id', flat=True)), n)
         recommendations = Song.objects.filter(id__in=ids).order_by('?')
