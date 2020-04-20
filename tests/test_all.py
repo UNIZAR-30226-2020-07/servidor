@@ -1,7 +1,7 @@
 import sys
 
 if not '--no-basics' in sys.argv:
-    print("Running basic tests")
+    print("Running basic tests...")
 
     # noinspection PyUnresolvedReferences
     import tests.test_info
@@ -9,7 +9,7 @@ if not '--no-basics' in sys.argv:
     print("Test ended.")
 
 if not '--no-friends' in sys.argv:
-    print("Running friends test ...")
+    print("Running friends test...")
 
     # noinspection PyUnresolvedReferences
     import tests.test_friends
