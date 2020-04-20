@@ -426,6 +426,97 @@ class Manager:
         data, _ = self._fetch('rest-auth/user/', token=self.key)
         return data
 
+    def check_song_info(self, num_song):
+        """
+        Returns if the data of a song if correct ()
+        :return:
+        """
+        url = 'songs/' + num_song + '/'
+        data, error = self._fetch(url, None, self.key, None, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        ok = 1
+        if data['title'] is None:
+            ok = 0
+        if data['duration'] is None:
+            ok = 0
+        if data['stream_url'] is None:
+            ok = 0
+        if data['album'] is None:
+            ok = 0
+        if data['genre'] is None:
+            ok = 0
+        if data['avg_valoration'] < 0.0:
+            ok = 0
+        if data['count_valoration'] < 0:
+            ok = 0
+        if data['user_valoration'] is not None and data['user_valoration'] < 0:
+            ok = 0
+
+        return ok
+
+    def check_album_info(self, num_album):
+        """
+        Returns if the data of an album if correct ()
+        :return:
+        """
+        url = 'albums/' + num_album + '/'
+        data, error = self._fetch(url, None, self.key, None, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        ok = 1
+        if data['name'] is None:
+            ok = 0
+        if data['songs'] is None:
+            ok = 0
+        if data['artist'] is None:
+            ok = 0
+        if data['podcast'] is None:
+            ok = 0
+        return ok
+
+    def check_artist_info(self, num_artist):
+        """
+        Returns if the data of an artist if correct ()
+        :return:
+        """
+        url = 'artists/' + num_artist + '/'
+        data, error = self._fetch(url, None, self.key, None, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        ok = 1
+        if data['name'] is None:
+            ok = 0
+        if data['albums'] is None:
+            ok = 0
+        return ok
+
+    def check_playlists_info(self, num_playlist):
+        """
+        Returns if the data of a playlist if correct ()
+        :return:
+        """
+        url = 'playlists/' + num_playlist + '/'
+        data, error = self._fetch(url, None, self.key, None, None)
+        if error:
+            # error
+            return self.formatErrors(data)
+        ok = 1
+        if data['name'] is None:
+            ok = 0
+
+        # Check if user really exists
+        usuario = data['user']
+        username = usuario['username']
+        url = 'users/' + str(usuario['id']) + '/'
+        data, error = self._fetch(url, None, self.key, None, None)
+        if data['username'] is username:
+            ok = 0
+        return ok
+
     def toggleLocal(self):
         self.uselocal = not self.uselocal
 
