@@ -436,25 +436,8 @@ class Manager:
         if error:
             # error
             return self.formatErrors(data)
-        ok = 1
-        if data['title'] is None:
-            ok = 0
-        if data['duration'] is None:
-            ok = 0
-        if data['stream_url'] is None:
-            ok = 0
-        if data['album'] is None:
-            ok = 0
-        if data['genre'] is None:
-            ok = 0
-        if data['avg_valoration'] < 0.0:
-            ok = 0
-        if data['count_valoration'] < 0:
-            ok = 0
-        if data['user_valoration'] is not None and data['user_valoration'] < 0:
-            ok = 0
 
-        return ok
+        return data
 
     def check_album_info(self, num_album):
         """
@@ -466,16 +449,7 @@ class Manager:
         if error:
             # error
             return self.formatErrors(data)
-        ok = 1
-        if data['name'] is None:
-            ok = 0
-        if data['songs'] is None:
-            ok = 0
-        if data['artist'] is None:
-            ok = 0
-        if data['podcast'] is None:
-            ok = 0
-        return ok
+        return data
 
     def check_artist_info(self, num_artist):
         """
@@ -487,12 +461,7 @@ class Manager:
         if error:
             # error
             return self.formatErrors(data)
-        ok = 1
-        if data['name'] is None:
-            ok = 0
-        if data['albums'] is None:
-            ok = 0
-        return ok
+        return data
 
     def check_playlists_info(self, num_playlist):
         """
@@ -504,18 +473,8 @@ class Manager:
         if error:
             # error
             return self.formatErrors(data)
-        ok = 1
-        if data['name'] is None:
-            ok = 0
 
-        # Check if user really exists
-        usuario = data['user']
-        username = usuario['username']
-        url = 'users/' + str(usuario['id']) + '/'
-        data, error = self._fetch(url, None, self.key, None, None)
-        if data['username'] is username:
-            ok = 0
-        return ok
+        return data
 
     def toggleLocal(self):
         self.uselocal = not self.uselocal
