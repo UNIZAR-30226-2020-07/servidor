@@ -60,16 +60,40 @@ class Manager:
                 errors.append('{}: {}'.format(field, message))
         return errors
 
+    def depaginate(self, data):
+        """
+        Yields all the items by performing subsecuent gets for paginated data.
+        Errors in subsecuent gets are ignored.
+        :param data: an object result of a paginates get, should contain a 'results' with the list of elements to yield and a 'next' with the next page to get.
+        """
+        while True:
+            for result in data['results']:
+                yield result
+            next = data['next']
+            if next is None:
+                break
+            data, _ = self._fetch(next)
+
     def getSongs(self):
         """
         GET songs
         """
-        url = 'songs'
-        while url is not None:
-            data, _ = self._fetch(url)
-            for song in data['results']:
-                yield song
-            url = data['next']
+        data, _ = self._fetch('songs')
+        return self.depaginate(data)
+
+    def getArtists(self):
+        """
+        GET artists
+        """
+        data, _ = self._fetch('artists')
+        return self.depaginate(data)
+
+    def getAlbums(self):
+        """
+        GET albums
+        """
+        data, _ = self._fetch('albums')
+        return self.depaginate(data)
 
     def getPlaylist(self, n_playlist):
         """
@@ -84,12 +108,8 @@ class Manager:
         """
         GET all playlist from the server
         """
-        url = 'playlists'
-        while url is not None:
-            data, _ = self._fetch(url)
-            for playlist in data['results']:
-                yield playlist
-            url = data['next']
+        data, _ = self._fetch('playlists')
+        return self.depaginate(data)
 
     def createPlaylist(self, p_name, songs):
         """
@@ -424,56 +444,6 @@ class Manager:
             # only if registered
             return None
         data, _ = self._fetch('rest-auth/user/', token=self.key)
-        return data
-
-    def check_song_info(self, num_song):
-        """
-        Returns if the data of a song if correct ()
-        :return:
-        """
-        url = 'songs/' + num_song + '/'
-        data, error = self._fetch(url, None, self.key, None, None)
-        if error:
-            # error
-            return self.formatErrors(data)
-
-        return data
-
-    def check_album_info(self, num_album):
-        """
-        Returns if the data of an album if correct ()
-        :return:
-        """
-        url = 'albums/' + num_album + '/'
-        data, error = self._fetch(url, None, self.key, None, None)
-        if error:
-            # error
-            return self.formatErrors(data)
-        return data
-
-    def check_artist_info(self, num_artist):
-        """
-        Returns if the data of an artist if correct ()
-        :return:
-        """
-        url = 'artists/' + num_artist + '/'
-        data, error = self._fetch(url, None, self.key, None, None)
-        if error:
-            # error
-            return self.formatErrors(data)
-        return data
-
-    def check_playlists_info(self, num_playlist):
-        """
-        Returns if the data of a playlist if correct ()
-        :return:
-        """
-        url = 'playlists/' + num_playlist + '/'
-        data, error = self._fetch(url, None, self.key, None, None)
-        if error:
-            # error
-            return self.formatErrors(data)
-
         return data
 
     def toggleLocal(self):
