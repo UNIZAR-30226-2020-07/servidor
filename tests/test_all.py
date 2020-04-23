@@ -1,41 +1,43 @@
 import sys
 
-if not '--no-basics' in sys.argv:
-    print("Running basic tests...")
+if __name__ == '__main__':
 
-    # noinspection PyUnresolvedReferences
-    import tests.test_info
+    if not '--no-basics' in sys.argv:
+        print("Running basic tests...")
 
-    print("Test ended.")
+        # noinspection PyUnresolvedReferences
+        import tests.test_info
 
-if not '--no-friends' in sys.argv:
-    print("Running friends test...")
+        print("Test ended.")
 
-    # noinspection PyUnresolvedReferences
-    import tests.test_friends
+    if not '--no-friends' in sys.argv:
+        print("Running friends test...")
 
-    print("Test ended.")
+        # noinspection PyUnresolvedReferences
+        import tests.test_friends_unit
 
-if not '--no-playlists' in sys.argv:
-    print("Running playlist test...")
+        print("Test ended.")
 
-    # noinspection PyUnresolvedReferences
-    import tests.test_playlists
+    if not '--no-playlists' in sys.argv:
+        print("Running playlist test...")
 
-    print("Test ended.")
+        # noinspection PyUnresolvedReferences
+        import tests.test_playlists
 
-if not '--no-lastUsersInfo' in sys.argv:
-    print("Running user lasts listened song and second test...")
+        print("Test ended.")
 
-    # noinspection PyUnresolvedReferences
-    import tests.test_users
+    if not '--no-lastUsersInfo' in sys.argv:
+        print("Running user lasts listened song and second test...")
 
-    print("Test ended.")
+        # noinspection PyUnresolvedReferences
+        import tests.test_users
 
-if not '--no-search' in sys.argv:
-    print("Running search test...")
+        print("Test ended.")
 
-    # noinspection PyUnresolvedReferences
-    import tests.test_search
+    if not '--no-search' in sys.argv:
+        print("Running search test...")
 
-    print("Test ended.")
+        # noinspection PyUnresolvedReferences
+        import tests.test_search
+
+        print("Test ended.")

@@ -15,14 +15,14 @@ if '--debug' in sys.argv:
 # start
 current_id = None
 #   Trying to operate with private fields without been logged in
-#if manager.setLasts() is None:
-#    print("Error at setting initial last song and second to user without been logged")
+if manager.setLasts() is None:
+    print("Error at setting initial last song and second to user without been logged")
 
-#if manager.getLastSongPlayed() is not None:
-#    print("Error at reading last song from user without been logged")
+if manager.getLastSongPlayed() is None:
+    print("Error at reading last song from user without been logged")
 
-#if manager.getLastSecondPlayed() is not None:
-#    print("Error at reading last second from user without been logged")
+if manager.getLastSecondPlayed() is None:
+    print("Error at reading last second from user without been logged")
 
 #   Trying to operate with private fields while been logged in
 manager.login('user', 'user')
