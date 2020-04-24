@@ -12,10 +12,10 @@ dist/
 docs/_build/
 docs/locale/
 node_modules/
-tests/coverage_html/
-tests/.coverage
+test/coverage_html/
+test/.coverage
 build/
-tests/report/
+test/report/
 
 /venv/
 /.idea/

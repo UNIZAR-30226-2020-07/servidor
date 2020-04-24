@@ -1,4 +1,4 @@
-from tests.manager import Manager
+from test.manager import Manager
 
 
 class ConsoleMenu:

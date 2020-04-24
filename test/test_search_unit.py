@@ -1,6 +1,6 @@
 import unittest
 
-from tests.manager import Manager
+from test.manager import Manager
 
 # intialize
 manager = Manager()

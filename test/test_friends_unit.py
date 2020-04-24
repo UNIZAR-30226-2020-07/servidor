@@ -1,6 +1,6 @@
 import unittest
 
-from tests.manager import Manager
+from test.manager import Manager
 
 manager = Manager()
 current_id = 0
@@ -14,7 +14,7 @@ class TestFriendsNoLogin(unittest.TestCase):
         """
         global current_id
         current_id = 0
-        manager.key = None
+        manager.logout()
 
     def test_AddErrorUser(self):
         """

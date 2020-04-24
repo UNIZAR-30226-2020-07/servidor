@@ -1,6 +1,6 @@
 import unittest
 
-from tests.manager import Manager
+from test.manager import Manager
 
 manager = Manager()
 
@@ -11,7 +11,7 @@ class NotLoggedInUsers(unittest.TestCase):
         """
         Prepare a no login user
         """
-        manager.key = None
+        manager.logout()
 
     def test_SetLastSong(self):
         """

@@ -1,6 +1,6 @@
 import unittest
 
-from tests.manager import Manager
+from test.manager import Manager
 
 # intialize
 manager = Manager()
@@ -19,7 +19,7 @@ class NotLoggedIn(unittest.TestCase):
             manager.login('user', 'user')
             idPlaylist = manager.createPlaylist('cuarentena2', [20])
             self.assertIsNot(idPlaylist, -1)
-        manager.key = None
+        manager.logout()
 
     def test_Create(self):
         """

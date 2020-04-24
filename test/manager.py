@@ -1,3 +1,7 @@
+import os
+import sys
+from distutils.util import strtobool
+
 import requests
 
 
@@ -7,11 +11,11 @@ class Manager:
 
     def __init__(self):
         """
-        Python things, indicates this object has a key variable
+        Initializes the manager
         """
         self.key = None
-        self.uselocal = False
-        self.debug = False
+        self.uselocal = '--local' in sys.argv or strtobool(os.environ.get('LOCAL', '0'))
+        self.debug = '--debug' in sys.argv or strtobool(os.environ.get('DEBUG', '0'))
 
     def _fetch(self, url, body=None, token=None, method=None, params=None):
         """
@@ -204,6 +208,12 @@ class Manager:
         else:
             # error
             return self.formatErrors(result)
+
+    def logout(self):
+        """
+        Logs out. No server petition required (only key is dropped)
+        """
+        self.key = None
 
     def addFollowed(self, username_id, followed_user):
         """
