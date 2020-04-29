@@ -72,7 +72,7 @@ class UserAuthSerializer(UserWithPlaylistAndFriendsSerializer):
     pause_song is serializer with albums serialized with artist serialized as plain
     """
 
-    pause_song = ShowDetailsAcceptPkField(SongWithAlbumAndArtistSerializer)
+    pause_song = ShowDetailsAcceptPkField(SongWithAlbumAndArtistSerializer, allow_null=True)
 
     class Meta:
         model = CustomUser
