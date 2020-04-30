@@ -65,6 +65,7 @@ class Song(models.Model):
         choices=Genre.choices,
     )
     episode = models.BooleanField(default=False)
+    date = models.DateField(null=True)
 
     # playlists: reverse relation in Playlist
     # user_valoration: reverse relation in User

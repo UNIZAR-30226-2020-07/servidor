@@ -43,6 +43,7 @@ class SongPlainSerializer(serializers.ModelSerializer):
             "episode",
             "avg_valoration",
             "count_valoration",
+            "date",
         ]
         fields = read_only_fields + [
             "user_valoration",  # the writable field
