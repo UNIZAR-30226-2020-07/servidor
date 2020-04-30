@@ -3,6 +3,7 @@ List of models
 """
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 
 class Genre(models.TextChoices):
@@ -65,7 +66,7 @@ class Song(models.Model):
         choices=Genre.choices,
     )
     episode = models.BooleanField(default=False)
-    date = models.DateField(null=True)
+    created_at = models.DateTimeField(default=timezone.now)  # instead of auto_now_add=True to allow editing from the admin console
 
     # playlists: reverse relation in Playlist
     # user_valoration: reverse relation in User
