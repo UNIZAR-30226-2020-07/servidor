@@ -217,12 +217,11 @@ def getDriveSongs():
 
 ###########
 episodes_drive = [
+    ("Opening numero 3 - JoJos", "1bxZfKL9o9SINylSnginWa2fOavbfv7Nq", 1, 40),
+    ("Thats the four one - JoJos", "1epUJvnIK_vubkSX0VVmaBvuAfKik1TCD", 1, 30),
     ("Fulluragirimono no requiemby daisuke hasegawa - JoJos", "1-xn-yT6O9fum8pUq5vag4J_ElLmrwtfI", 3, 59),
     ("You say run - My hero academia", "1hcK8bJIyvHlXgs83S8pq-GfyMpQfTibK", 3, 52),
     ("The best day ever - SpongeBob", "1JJUto_oiiSfqIDKNfKMVIYzrzUQe0Rv6", 3, 2),
-    ("Segundo Opening - JoJos", "1qUDPUvQxX8am5OMk99Clfn3dAIjUFD6R", 2, 53),
-    ("Opening numero 3 - JoJos", "1DArTjmAm9NgwmsvxZipF1FESovOXsNt0", 2, 55),
-    ("Thats the four one - JoJos", "1zx1AahkQVWIcypK-9JOcx6HyqIhgINHy", 3, 41),
 ]
 songs_drive = [
     ("Pixel Pig - Di Young [Vlog No Copyright Music]", "1qUDPUvQxX8am5OMk99Clfn3dAIjUFD6R", 2, 53),
