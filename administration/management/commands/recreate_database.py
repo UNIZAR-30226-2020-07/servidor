@@ -11,6 +11,7 @@ Just call it from the command line: $python manage.py recreate_database
 import random
 from random import sample, choice, randint
 
+from django.contrib.sites.models import Site
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
@@ -56,6 +57,12 @@ def run():
     createPlaylists(10)
     createValorations()
     print('...done')
+
+    # site
+    one = Site.objects.all()[0]
+    one.domain = 'ps-20-server-django-app.herokuapp.com'
+    one.name = 'Heroku ps-20-server-django-app'
+    one.save()
 
 
 def deleteDatabaseFile():

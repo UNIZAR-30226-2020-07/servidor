@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block head_title %}{% endblock %}</title>
+    {% block extra_head %}
+    {% endblock %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+        .demo-card-wide.mdl-card {
+            width: 90%;
+            height: 90%;
+        }
+
+        body {
+            width: 100%;
+            padding: 50px;
+        }
+    </style>
+</head>
+<body>
+
+{% if messages %}
+    <div>
+        <strong>Messages:</strong>
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+
+<div class="demo-card-wide mdl-card mdl-shadow--2dp">
+    {#  <div class="mdl-card__title">#}
+    {#    <h2 class="mdl-card__title-text">Welcome</h2>#}
+    {#  </div>#}
+    <div class="mdl-card__supporting-text">
+        {% block content %}
+        {% endblock %}
+    </div>
+    {#  <div class="mdl-card__actions mdl-card--border">#}
+    {#    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">#}
+    {#      Get Started#}
+    {#    </a>#}
+    {#  </div>#}
+    {#  <div class="mdl-card__menu">#}
+    {#    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">#}
+    {#      <i class="material-icons">share</i>#}
+    {#    </button>#}
+    {#  </div>#}
+</div>
+
+
+<script>
+    $(":button,:submit").addClass("mdl-button mdl-js-button mdl-button--raised");
+</script>
+</body>
+</html>
