@@ -4,7 +4,7 @@ A serializer represents how an object is converted into JSON
 
 from rest_framework import serializers
 
-from songs.serializers import SongWithAlbumAndArtistSerializer, AlbumPlainSerializer
+from songs.serializers import SongWithAlbumAndArtistSerializer, AlbumWithArtistSerializer
 from users.fields import ShowDetailsAcceptPkField
 from users.models import CustomUser, Playlist
 
@@ -59,7 +59,7 @@ class UserWithPlaylistAndFriendsSerializer(UserPlainSerializer):
 
     playlists = ShowDetailsAcceptPkField(PlaylistPlainSerializer, many=True, read_only=True)
     friends = ShowDetailsAcceptPkField(UserPlainSerializer, many=True)
-    albums = ShowDetailsAcceptPkField(AlbumPlainSerializer, many=True)
+    albums = ShowDetailsAcceptPkField(AlbumWithArtistSerializer, many=True)
 
 
 class UserAuthSerializer(UserWithPlaylistAndFriendsSerializer):
