@@ -82,6 +82,7 @@ class UserAuthSerializer(UserWithPlaylistAndFriendsSerializer):
             "email",
             "playlists",
             "friends",
+            "albums",
             "pause_song",
             "pause_second",
         ]
