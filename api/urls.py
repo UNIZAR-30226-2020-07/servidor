@@ -19,6 +19,8 @@ router.extend(router_users)
 router.addCustomUrl('login', 'rest_login')
 router.addCustomUrl('register', 'rest_register')
 router.addCustomUrl('you', 'rest_user_details')
+router.addCustomUrl('recover', 'rest_password_reset')
+router.addCustomUrl('WEB recover', 'password_reset')
 
 urlpatterns = [
     path('', include(router.urls)),

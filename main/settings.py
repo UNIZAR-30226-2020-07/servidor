@@ -140,14 +140,25 @@ ACCOUNT_EMAIL_REQUIRED = True  # requires and email
 ACCOUNT_UNIQUE_EMAIL = True  # and should be unique
 ACCOUNT_USERNAME_REQUIRED = True  # requires a username
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # login by username or email (if both, email is used)
-ACCOUNT_EMAIL_VERIFICATION = 'none'  # don't verify email (no email backend yet)
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # don't verify email
 # ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 # ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/?verification=1'
 # ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/?verification=1'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+if 'EMAIL_PASSWORD' in os.environ:
+    # email configured
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = 'instantmusicapp@gmail.com'
+    EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    SITE_ID = 1
+else:
+    # email not configured
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    SITE_ID = 2
 
-SITE_ID = 1
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

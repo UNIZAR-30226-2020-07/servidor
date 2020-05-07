@@ -61,8 +61,9 @@ def run():
     # site
     one = Site.objects.all()[0]
     one.domain = 'ps-20-server-django-app.herokuapp.com'
-    one.name = 'Heroku ps-20-server-django-app'
+    one.name = 'MusicApp'
     one.save()
+    Site(domain="localhost:8000", name="MusicApp").save()
 
 
 def deleteDatabaseFile():
@@ -106,13 +107,13 @@ def createUsers():
     User = get_user_model()
 
     # create superuser
-    superuser = User.objects.create_superuser(username='admin', email='admin@admin.admin', password='admin')
+    superuser = User.objects.create_superuser(username='admin', email='instantmusicapp+admin@gmail.com', password='admin')
     print(f'Created superuser {superuser}')
 
     # create normal users
     for user_params in ['user', 'user2', 'user3']:
         friends = list(User.objects.all())  # to avoid being friends with yourself
-        user = User.objects.create_user(username=user_params, email=f'{user_params}@{user_params}.{user_params}', password=user_params)
+        user = User.objects.create_user(username=user_params, email=f'instantmusicapp+{user_params}@gmail.com', password=user_params)
         user.friends.set(friends)
         user.pause_song = getRandomObject(Song)
         user.pause_second = randint(1, user.pause_song.duration - 1)
