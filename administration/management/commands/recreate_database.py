@@ -60,10 +60,10 @@ def run():
 
     # site
     one = Site.objects.all()[0]
-    one.domain = 'ps-20-server-django-app.herokuapp.com'
+    one.domain = 'localhost:8000'
     one.name = 'MusicApp'
     one.save()
-    Site(domain="localhost:8000", name="MusicApp").save()
+    Site(domain="ps-20-server-django-app.herokuapp.com", name="MusicApp").save()
 
 
 def deleteDatabaseFile():
