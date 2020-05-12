@@ -4,7 +4,6 @@ List of models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from sortedm2m.fields import SortedManyToManyField
 
 from main import settings
 from songs.models import Song, Album
@@ -27,7 +26,7 @@ class Playlist(models.Model):
     Object Playlist with title, ID and Songs
     """
     name = models.CharField(max_length=100)
-    songs = SortedManyToManyField(Song, blank=True, related_name='playlists')
+    songs = models.ManyToManyField(Song, blank=True, related_name='playlists')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='playlists')
 
     def __str__(self):
