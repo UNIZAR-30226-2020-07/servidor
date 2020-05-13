@@ -19,3 +19,4 @@ test/report/
 
 /venv/
 /.idea/
+/db.sqlite3
