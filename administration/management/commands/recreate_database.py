@@ -11,45 +11,56 @@ Just call it from the command line: $python manage.py recreate_database
 import random
 from random import sample, choice, randint
 
+from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
 from songs.models import Song, Artist, Album, Genre
+
+User = get_user_model()
 # Registers the command in Django
 from users.models import Playlist, Valoration
 
 
 class Command(BaseCommand):
     def handle(self, **options):
-        run()
+        run(options['heroku'])
+
+    def add_arguments(self, parser):
+        parser.add_argument('--heroku', action='store_true', help='To run in Heroku mode')
 
 
 ###################################################################################################
 import os
 import glob
-from django.contrib.auth import get_user_model
 
 
-def run():
+def run(heroku):
     """
     What will run
     """
-    print('Deleting db.sqlite3 file...')
-    deleteDatabaseFile()
-    print('...done')
+    if heroku:
+        for model in [Song, Album, Artist, User, Playlist, Valoration]:
+            print(f'Deleting all objects from {model.__name__}...')
+            model.objects.all().delete()
+            print('...done')
+    else:
+        print('Deleting db.sqlite3 file...')
+        deleteDatabaseFile()
+        print('...done')
 
-    print('Deleting migrations files...')
-    deleteMigrations()
-    print('...done')
+        print('Deleting migrations files...')
+        deleteMigrations()
+        print('...done')
 
-    print('Call makemigrations...')
-    call_command('makemigrations')
-    print('...done')
+        print('Call makemigrations...')
+        call_command('makemigrations')
+        print('...done')
 
-    print('Call migrate...')
-    call_command('migrate')
-    print('...done')
+        print('Call migrate...')
+        call_command('migrate')
+        print('...done')
 
     print('Populating database...')
     createSongsAlbumsAndArtists()
@@ -104,7 +115,6 @@ def createUsers():
     """
     creates an admin and three normal users with random data
     """
-    User = get_user_model()
 
     # create superuser
     superuser = User.objects.create_superuser(username='admin', email='instantmusicapp+admin@gmail.com', password='admin')

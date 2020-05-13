@@ -13,8 +13,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0011_update_proxy_permissions'),
         ('songs', '0001_initial'),
+        ('auth', '0011_update_proxy_permissions'),
     ]
 
     operations = [
