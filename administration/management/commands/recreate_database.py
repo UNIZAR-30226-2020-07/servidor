@@ -50,17 +50,18 @@ def run(heroku):
         deleteDatabaseFile()
         print('...done')
 
-        print('Deleting migrations files...')
-        deleteMigrations()
-        print('...done')
+        # don't delete, heroku needs them, new migrations will append existing ones
+        # print('Deleting migrations files...')
+        # deleteMigrations()
+        # print('...done')
 
-        print('Call makemigrations...')
-        call_command('makemigrations')
-        print('...done')
+    print('Call makemigrations...')
+    call_command('makemigrations')
+    print('...done')
 
-        print('Call migrate...')
-        call_command('migrate')
-        print('...done')
+    print('Call migrate...')
+    call_command('migrate')
+    print('...done')
 
     print('Populating database...')
     createSongsAlbumsAndArtists()
@@ -71,10 +72,11 @@ def run(heroku):
 
     # site
     one = Site.objects.all()[0]
-    one.domain = 'localhost:8000'
-    one.name = 'MusicApp'
-    one.save()
-    Site(domain="ps-20-server-django-app.herokuapp.com", name="MusicApp").save()
+    if one.name == 'example.com':
+        one.domain = 'localhost:8000'
+        one.name = 'MusicApp'
+        one.save()
+        Site(domain="ps-20-server-django-app.herokuapp.com", name="MusicApp").save()
 
 
 def deleteDatabaseFile():
