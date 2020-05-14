@@ -157,7 +157,7 @@ if 'EMAIL_PASSWORD' in os.environ:
     EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    SITE_ID = 2
+    SITE_ID = 3
 else:
     # email not configured
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
