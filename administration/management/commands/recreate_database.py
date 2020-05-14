@@ -237,6 +237,9 @@ def getDriveSongs():
 
 ###########
 episodes_drive = [
+    ("Kira's theme - JoJos", "1gCnzSfquYKTiTPc1zrVvAW8C8BnpXlSy", 3, 0),
+    ("Il vento d'oro - JoJos", "1gQfiAr8Y8pro8yTYLOCFFo42dgOPv99P", 4, 52),
+    ("Segundo Opening - JoJos", "1U3JkCO6YlUpKejfglmX1mdpQrf0jMl0P", 1, 32),
     ("Fulluragirimono no requiemby daisuke hasegawa - JoJos", "1-xn-yT6O9fum8pUq5vag4J_ElLmrwtfI", 3, 59),
     ("You say run - My hero academia", "1hcK8bJIyvHlXgs83S8pq-GfyMpQfTibK", 3, 52),
     ("The best day ever - SpongeBob", "1JJUto_oiiSfqIDKNfKMVIYzrzUQe0Rv6", 3, 2),
