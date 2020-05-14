@@ -1,6 +1,7 @@
 """
 List of models
 """
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -19,6 +20,10 @@ class CustomUser(AbstractUser):
     pause_second = models.PositiveIntegerField(null=True, blank=True)
     albums = models.ManyToManyField(Album, blank=True)
     valorations = models.ManyToManyField(Song, through='Valoration', related_name='user_valorations')
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        EmailAddress.objects.filter(user=self).delete()  # simply delete the created email, we don't need it
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
 
 class Playlist(models.Model):
