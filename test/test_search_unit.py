@@ -57,7 +57,7 @@ class ExistingUsers(unittest.TestCase):
         """
         Search a existing user by email
         """
-        self.assertIsNotNone(manager.searchUser('user@user.user'))
+        self.assertIsNotNone(manager.searchUser('instantmusicapp+user@gmail.com'))
 
 
 class NOTExistingElements(unittest.TestCase):

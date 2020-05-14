@@ -58,24 +58,27 @@ class LoggedInUsers(unittest.TestCase):
         """
         Check the last song listen for user
         """
+        manager.setLasts()
         self.assertIsNotNone(manager.getLastSongPlayed())
 
     def test_LastSecond(self):
         """
         Check the last second listen for user
         """
+        manager.setLasts()
         self.assertIsNotNone(manager.getLastSecondPlayed())
 
-    def test_SetValortion(self):
+    def test_SetValoration(self):
         """
         Set a valoration for song 1
         """
         self.assertIsNotNone(manager.setValorations(1, 5))
 
-    def test_ReadValortion(self):
+    def test_ReadValoration(self):
         """
         Read valorations for song 1
         """
+        manager.setValorations(1, 5)
         self.assertIsNotNone(manager.readValorations(1))
 
 
