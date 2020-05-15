@@ -5,7 +5,7 @@ from django.conf.urls import url
 from django.urls import include, path
 
 from api import routers
-from api.views import schema_view
+from api.views import schema_view, MyUserDetailsView
 from songs.urls import router as router_songs
 from users.urls import router as router_users
 
@@ -19,7 +19,7 @@ router.extend(router_users)
 router.addCustomUrl('login', 'rest_login')
 router.addCustomUrl('logout', 'rest_logout')
 router.addCustomUrl('register', 'rest_register')
-router.addCustomUrl('you', 'rest_user_details')
+router.addCustomUrl('you', 'my_rest_user_details')
 router.addCustomUrl('change_password', 'rest_password_change')
 router.addCustomUrl('reset_password', 'rest_password_reset')
 router.addCustomUrl('WEB reset_password', 'password_reset')
@@ -28,6 +28,7 @@ urlpatterns = [
     path('', include(router.urls)),
 
     # for authentication
+    url(r'^rest-auth/user', MyUserDetailsView.as_view(), name='my_rest_user_details'),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
 

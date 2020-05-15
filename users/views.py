@@ -18,6 +18,7 @@ from users.serializers import UserWithPlaylistAndFriendsSerializer, PlaylistWith
 class UserViewSet(mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
                   mixins.ListModelMixin,
+                  mixins.DestroyModelMixin,
                   viewsets.GenericViewSet):
     """
     Anyone can view all users, only the owner can edit
@@ -28,7 +29,7 @@ class UserViewSet(mixins.RetrieveModelMixin,
     search_fields = ['username', 'email']
 
     def get_permissions(self):
-        if self.action in ['update', 'partial_update']:
+        if self.action in ['update', 'partial_update', 'destroy']:
             # only owner (or admin) users can modify
             return [IsOwnerOrAdmin()]
         return super().get_permissions()
